@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 
+const API = import.meta.env.VITE_API_URL;
+
 interface JournalEntry {
     id: string;
     title: string;
@@ -11,7 +13,7 @@ export default function JournalList() {
     const [entries, setEntries] = useState<JournalEntry[]>([]);
 
     useEffect(() => {
-        fetch("http://localhost:8000/journal")
+        fetch(`${API}/journal`)
             .then((res) => res.json())
             .then(setEntries)
             .catch(console.error);
