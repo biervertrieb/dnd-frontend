@@ -1,18 +1,15 @@
-import { useState } from 'react'
-import './App.css'
+import JournalTimeline from "./JournalTimeline";
 
-import JournalList from './JournalList';
-
-function App() {
-
+export default function App() {
     return (
         <>
             <div>
                 <h1>D&D Journal & Loot Tracker</h1>
-                <JournalList />
+                <div style={{ padding: 16 }}>
+                    <JournalTimeline />
+                </div>
             </div>
         </>
-    )
+    );
 }
 
-export default App
