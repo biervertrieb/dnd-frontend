@@ -114,10 +114,13 @@ export default function JournalTimeline() {
                                         </div>
                                         {focused && !editing && (
                                             <button
-                                                className="btn small"
+                                                className="btn icon quill"
+                                                aria-label="Edit entry"
+                                                title="Edit entry"
                                                 onClick={(e) => { e.stopPropagation(); setEditingId(entry.id); }}
                                             >
-                                                Edit
+                                                {/* SVG Quill icon */}
+                                                <img src="/assets/icons/quill.svg" alt="" width={18} height={18} />
                                             </button>
                                         )}
                                     </header>
