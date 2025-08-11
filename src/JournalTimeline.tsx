@@ -29,7 +29,6 @@ export default function JournalTimeline() {
             // newest first (ensure consistent order)
             data.sort((a, b) => parseInt(b.ingame_day) - parseInt(a.ingame_day));
             setEntries(data);
-            console.log(data);
             setFocusedId(data[0]?.id ?? null);
             setLoading(false);
         })();
