@@ -27,7 +27,7 @@ export default function JournalTimeline() {
             const res = await fetch(`${API}/journal`);
             const data = (await res.json()) as JournalEntry[];
             // newest first (ensure consistent order)
-            data.sort((a, b) => +new Date(b.created_at) - +new Date(a.created_at));
+            data.sort((a, b) => parseInt(b.day) - parseInt(a.day));
             setEntries(data);
             setFocusedId(data[0]?.id ?? null);
             setLoading(false);
@@ -106,11 +106,7 @@ export default function JournalTimeline() {
                                 >
                                     <header className="tl-card-header">
                                         <div>
-                                            <h3 className="tl-title">{entry.title || "(untitled)"}</h3>
-                                            <time className="tl-meta">
-                                                {new Date(entry.created_at).toLocaleString()}
-                                                {entry.updated_at ? ` • edited ${new Date(entry.updated_at).toLocaleString()}` : ""}
-                                            </time>
+                                            <h3 className="tl-title">Day {entry.day}: {entry.title || "(untitled)"}</h3>
                                         </div>
                                         {focused && !editing && (
                                             <button
@@ -135,8 +131,17 @@ export default function JournalTimeline() {
                                             onCancel={() => setEditingId(null)}
                                         />
                                     ) : (
-                                        <div className="tl-content markdown">
-                                            <ReactMarkdown>{entry.body}</ReactMarkdown>
+                                        <div>
+                                            <div className="tl-content markdown">
+                                                <ReactMarkdown>{entry.body}</ReactMarkdown>
+                                            </div>
+                                            <footer>
+                                                <div>
+                                                    <time className="tl-meta">
+                                                        {entry.updated_at ? `edited ${new Date(entry.updated_at).toLocaleString()}` : `created ${new Date(entry.created_at).toLocaleString()}`}
+                                                    </time>
+                                                </div>
+                                            </footer>
                                         </div>
                                     )}
                                 </article>
