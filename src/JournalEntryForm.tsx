@@ -75,9 +75,9 @@ export default function JournalEntryForm({ mode, initial, onSubmitSuccess, onCan
             />
             <MDEditor value={body} onChange={(v) => setBody(v ?? "")} height={260} />
             <div style={{ display: "flex", gap: 8 }}>
-                <button class="btn" type="submit" disabled={saving}>{saving ? "Saving…" : mode === "create" ? "Create" : "Save"}</button>
+                <button className="btn" type="submit" disabled={saving}>{saving ? "Saving…" : mode === "create" ? "Create" : "Save"}</button>
                 {onCancel && (
-                    <button class="btn secondary" type="button" onClick={onCancel} disabled={saving}>Cancel</button>
+                    <button className="btn secondary" type="button" onClick={onCancel} disabled={saving}>Cancel</button>
                 )}
             </div>
         </form>
