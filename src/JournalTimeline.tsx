@@ -27,8 +27,9 @@ export default function JournalTimeline() {
             const res = await fetch(`${API}/journal`);
             const data = (await res.json()) as JournalEntry[];
             // newest first (ensure consistent order)
-            data.sort((a, b) => parseInt(b.day) - parseInt(a.day));
+            data.sort((a, b) => parseInt(b.ingame_day) - parseInt(a.ingame_day));
             setEntries(data);
+            console.log(data);
             setFocusedId(data[0]?.id ?? null);
             setLoading(false);
         })();
@@ -106,7 +107,7 @@ export default function JournalTimeline() {
                                 >
                                     <header className="tl-card-header">
                                         <div>
-                                            <h3 className="tl-title">Day {entry.day}: {entry.title || "(untitled)"}</h3>
+                                            <h3 className="tl-title">Day {entry.ingame_day}: {entry.title || "(untitled)"}</h3>
                                         </div>
                                         {focused && !editing && (
                                             <button

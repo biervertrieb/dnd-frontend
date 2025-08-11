@@ -17,14 +17,14 @@ const API = import.meta.env.VITE_API_URL;
 export default function JournalEntryForm({ mode, initial, onSubmitSuccess, onCancel }: Props) {
     const [title, setTitle] = useState(initial?.title ?? "");
     const [body, setBody] = useState<string>(initial?.body ?? "");
-    const [day, setDay] = useState<string>(initial?.day ?? "");
+    const [day, setDay] = useState<string>(initial?.ingame_day ?? "");
     const [saving, setSaving] = useState(false);
 
     useEffect(() => {
         setTitle(initial?.title ?? "");
         setBody(initial?.body ?? "");
-        setDay(initial?.day ?? "");
-    }, [initial?.title, initial?.body, initial?.day]);
+        setDay(initial?.ingame_day ?? "");
+    }, [initial?.title, initial?.body, initial?.ingame_day]);
 
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
