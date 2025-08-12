@@ -3,6 +3,8 @@ import ReactMarkdown from "react-markdown";
 import JournalEntryForm from "./JournalEntryForm";
 import type { JournalEntry } from "./types";
 
+import './journal.css'
+
 const API = import.meta.env.VITE_API_URL as string;
 
 // Stable “random” side based on id (so it doesn’t jump between renders)
