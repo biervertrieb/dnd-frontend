@@ -1,6 +1,6 @@
 // src/App.tsx
 import { useEffect, useState } from "react";
-import "./app.css";
+//import "./app.css";
 import "./features/journal/journal.css";
 import JournalTimeline from "./features/journal/JournalTimeline";
 //import "./features/compendium/compendium.css";
