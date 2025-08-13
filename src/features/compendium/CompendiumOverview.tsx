@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import ReactMarkdown from "react-markdown";
-import JournalEntryForm from "./JournalEntryForm";
-import type { JournalEntry } from "./types";
+import CompendiumEntryForm from "./CompendiumEntryForm";
+import type { CompendiumEntry } from "./types";
 
 const API = import.meta.env.VITE_API_URL as string;
 
@@ -15,7 +15,7 @@ function sideFor(id: string, mode: "alternate" | "hash" = "alternate", idx = 0):
 }
 
 export default function Compendium() {
-    const [entries, setEntries] = useState<JournalEntry[]>([]);
+    const [entries, setEntries] = useState<CompendiumEntry[]>([]);
     const [loading, setLoading] = useState(true);
     const [focusedId, setFocusedId] = useState<string | null>(null);
     const [editingId, setEditingId] = useState<string | null>(null);
@@ -24,10 +24,10 @@ export default function Compendium() {
     useEffect(() => {
         (async () => {
             setLoading(true);
-            const res = await fetch(`${API}/journal`);
-            const data = (await res.json()) as JournalEntry[];
-            // newest first (ensure consistent order)
-            data.sort((a, b) => parseInt(b.ingame_day) - parseInt(a.ingame_day));
+            const res = await fetch(`${API}/compendium`);
+            const data = (await res.json()) as CompendiumEntry[];
+            // sort alphabetically
+            data.sort((a, b) => parseInt(b.title.toLowerCase()) - parseInt(a.title.toLowerCase()));
             setEntries(data);
             setFocusedId(data[0]?.id ?? null);
             setLoading(false);
@@ -43,13 +43,13 @@ export default function Compendium() {
         }));
     }, [entries]);
 
-    function onCreated(entry: JournalEntry) {
+    function onCreated(entry: CompendiumEntry) {
         setEntries((prev) => [entry, ...prev]);
         setFocusedId(entry.id);
         setShowCreate(false);
     }
 
-    function onUpdated(entry: JournalEntry) {
+    function onUpdated(entry: CompendiumEntry) {
         setEntries((prev) => prev.map((x) => (x.id === entry.id ? entry : x)));
         setFocusedId(entry.id);
         setEditingId(null);
@@ -60,7 +60,7 @@ export default function Compendium() {
     return (
         <div className="tl-wrapper">
             <header className="tl-header">
-                <h2>D&amp;D Journal Timeline</h2>
+                <h2>D&amp;D Compendium Timeline</h2>
                 <div className="tl-actions">
                     {!showCreate && (
                         <button className="btn" onClick={() => { setShowCreate(true); setEditingId(null); }}>
@@ -78,7 +78,7 @@ export default function Compendium() {
             {showCreate && (
                 <section className="tl-card tl-card-wide enter">
                     <h3>Create Entry</h3>
-                    <JournalEntryForm mode="create" onSubmitSuccess={onCreated} onCancel={() => setShowCreate(false)} />
+                    <CompendiumEntryForm mode="create" onSubmitSuccess={onCreated} onCancel={() => setShowCreate(false)} />
                 </section>
             )}
 
@@ -106,7 +106,7 @@ export default function Compendium() {
                                 >
                                     <header className="tl-card-header">
                                         <div>
-                                            <h3 className="tl-title">Day {entry.ingame_day}: {entry.title || "(untitled)"}</h3>
+                                            <h3 className="tl-title">{entry.title || "(untitled)"}</h3>
                                         </div>
                                         {focused && !editing && (
                                             <button
@@ -124,7 +124,7 @@ export default function Compendium() {
                                     {!focused ? (
                                         <p className="tl-snippet">{snippet(entry.body)}</p>
                                     ) : editing ? (
-                                        <JournalEntryForm
+                                        <CompendiumEntryForm
                                             mode="edit"
                                             initial={entry}
                                             onSubmitSuccess={onUpdated}
@@ -136,6 +136,9 @@ export default function Compendium() {
                                                 <ReactMarkdown>{entry.body}</ReactMarkdown>
                                             </div>
                                             <footer>
+                                                <div>
+                                                    {entry.tags}
+                                                </div>
                                                 <div>
                                                     <time className="tl-meta">
                                                         {entry.updated_at ? `edited ${new Date(entry.updated_at).toLocaleString()}` : `created ${new Date(entry.created_at).toLocaleString()}`}
