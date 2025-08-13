@@ -2,8 +2,8 @@
 import { useEffect, useState } from "react";
 import "./app.css";
 import JournalTimeline from "./features/journal/JournalTimeline";
-//import "./features/compendium/compendium.css";
-//import Compendium from "./features/compendium/Compendium";
+import "./features/compendium/compendium.css";
+import CompendiumOverview from "./features/compendium/CompendiumOverview";
 // import Loot from "./features/loot/Loot"; // later
 
 type Tab = "journal" | "compendium" | "loot";
@@ -36,7 +36,7 @@ export default function App() {
 
             <main className="content">
                 {tab === "journal" && <JournalTimeline />}
-                {tab === "compendium" && <div>Compendium coming soon…</div>}
+                {tab === "compendium" && <CompendiumOverview />}
                 {tab === "loot" && <div>Loot coming soon…</div>}
             </main>
         </div>
