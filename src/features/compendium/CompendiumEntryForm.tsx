@@ -1,4 +1,3 @@
-// src/NewEntryForm.tsx
 import { useEffect, useState } from "react";
 import MDEditor from "@uiw/react-md-editor";
 import type { CompendiumEntry } from "./types";
@@ -10,15 +9,17 @@ interface Props {
     initial?: Partial<CompendiumEntry> & { id?: string };
     onSubmitSuccess(entry: CompendiumEntry): void;
     onCancel?(): void;
+    onDelete?(id: string): void;
 }
 
 const API = import.meta.env.VITE_API_URL;
 
-export default function CompendiumEntryForm({ mode, initial, onSubmitSuccess, onCancel }: Props) {
+export default function CompendiumEntryForm({ mode, initial, onSubmitSuccess, onCancel, onDelete }: Props) {
     const [title, setTitle] = useState(initial?.title ?? "");
     const [body, setBody] = useState<string>(initial?.body ?? "");
     const [tags, setTags] = useState<string>(initial?.tags ?? "");
     const [saving, setSaving] = useState(false);
+    const [deleting, setDeleting] = useState(false);
 
     useEffect(() => {
         setTitle(initial?.title ?? "");
@@ -68,6 +69,23 @@ export default function CompendiumEntryForm({ mode, initial, onSubmitSuccess, on
         }
     }
 
+    async function handleDelete() {
+        if (!initial?.id) return;
+        if (!confirm("Delete this compendium entry?")) return;
+
+        setDeleting(true);
+        try {
+            const res = await fetch(`${API}/compendium/${initial.id}`, { method: "DELETE" });
+            if (!res.ok && res.status !== 204) throw new Error(`Delete failed: ${res.status}`);
+            onDelete?.(initial.id);
+        } catch (e) {
+            console.error(e);
+            alert("Failed to delete entry.");
+        } finally {
+            setDeleting(false);
+        }
+
+    }
     return (
         <form onSubmit={handleSubmit} className="new-entry" data-color-mode="light" style={{ display: "grid", gap: 8 }}>
             <div style={{ display: "flex", gap: 8 }}>
@@ -93,6 +111,17 @@ export default function CompendiumEntryForm({ mode, initial, onSubmitSuccess, on
                     <button className="btn secondary" type="button" onClick={onCancel} disabled={saving}>Cancel</button>
                 )}
             </div>
+            {mode === "edit" && initial?.id && (
+                <button
+                    type="button"
+                    onClick={handleDelete}
+                    disabled={saving || deleting}
+                    style={{ background: "#f6d7d7", border: "1px solid #c79292", color: "#7b2a2a" }}
+                    title="Delete Entry"
+                >
+                    {deleting ? "Deleting..." : "Delete"}
+                </button>
+            )}
         </form>
     );
 }

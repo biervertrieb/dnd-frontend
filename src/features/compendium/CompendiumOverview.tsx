@@ -129,6 +129,11 @@ export default function Compendium() {
                                             initial={entry}
                                             onSubmitSuccess={onUpdated}
                                             onCancel={() => setEditingId(null)}
+                                            onDelete={(id) => {
+                                                setEntries(prev => prev.filter(e => e.id !== id));
+                                                setEditingId(null);
+                                                setFocusedId(null);
+                                            }}
                                         />
                                     ) : (
                                         <div>
