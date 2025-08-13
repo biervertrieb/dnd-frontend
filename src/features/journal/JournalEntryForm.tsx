@@ -10,15 +10,17 @@ interface Props {
     initial?: Partial<JournalEntry> & { id?: string };
     onSubmitSuccess(entry: JournalEntry): void;
     onCancel?(): void;
+    onDelete?(id: string): void;
 }
 
 const API = import.meta.env.VITE_API_URL;
 
-export default function JournalEntryForm({ mode, initial, onSubmitSuccess, onCancel }: Props) {
+export default function JournalEntryForm({ mode, initial, onSubmitSuccess, onCancel, onDelete }: Props) {
     const [title, setTitle] = useState(initial?.title ?? "");
     const [body, setBody] = useState<string>(initial?.body ?? "");
     const [day, setDay] = useState<string>(initial?.day ?? "");
     const [saving, setSaving] = useState(false);
+    const [deleting, setDeleting] = useState(false);
 
     useEffect(() => {
         setTitle(initial?.title ?? "");
@@ -72,6 +74,24 @@ export default function JournalEntryForm({ mode, initial, onSubmitSuccess, onCan
         }
     }
 
+    async function handleDelete() {
+        if (!initial?.id) return;
+        if (!confirm("Delete this journal entry?")) return;
+
+        setDeleting(true);
+        try {
+            const res = await fetch(`${API}/journal/${initial.id}`, { method: "DELETE" });
+            if (!res.ok && res.status !== 204) throw new Error(`Delete failed: ${res.status}`);
+            onDelete?.(initial.id);
+        } catch (e) {
+            console.error(e);
+            alert("Failed to delete entry.");
+        } finally {
+            setDeleting(false);
+        }
+
+    }
+
     return (
         <form onSubmit={handleSubmit} className="new-entry" data-color-mode="light" style={{ display: "grid", gap: 8 }}>
             <div style={{ display: "flex", gap: 8 }}>
@@ -89,10 +109,23 @@ export default function JournalEntryForm({ mode, initial, onSubmitSuccess, onCan
                 />
             </div>
             <MDEditor value={body} onChange={(v) => setBody(v ?? "")} height={260} />
-            <div style={{ display: "flex", gap: 8 }}>
-                <button className="btn" type="submit" disabled={saving}>{saving ? "Saving…" : mode === "create" ? "Create" : "Save"}</button>
-                {onCancel && (
-                    <button className="btn secondary" type="button" onClick={onCancel} disabled={saving}>Cancel</button>
+            <div style={{ display: "flex", gap: 8, justifyContent: "space-between" }}>
+                <div style={{ display: "flex", gap: 8 }}>
+                    <button className="btn" type="submit" disabled={saving}>{saving ? "Saving…" : mode === "create" ? "Create" : "Save"}</button>
+                    {onCancel && (
+                        <button className="btn secondary" type="button" onClick={onCancel} disabled={saving}>Cancel</button>
+                    )}
+                </div>
+                {mode === "edit" && initial?.id && (
+                    <button
+                        type="button"
+                        onClick={handleDelete}
+                        disabled={saving || deleting}
+                        style={{ background: "#f6d7d7", border: "1px solid #c79292", color: "#7b2a2a" }}
+                        title="Delete Entry"
+                    >
+                        {deleting ? "Deleting..." : "Delete"}
+                    </button>
                 )}
             </div>
         </form>
