@@ -1,8 +1,8 @@
-export interface JournalEntry {
+export interface CompendiumEntry {
     id: string;
     title: string;
     body: string;
-    ingame_day: string;
+    tags: string;
     created_at: string;
     updated_at?: string;
 }
