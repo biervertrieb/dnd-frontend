@@ -2,8 +2,8 @@
 import { useEffect, useState } from "react";
 import "./app.css";
 import JournalTimeline from "./features/journal/JournalTimeline";
-import "./features/compendium/compendium.css";
 import CompendiumOverview from "./features/compendium/CompendiumOverview";
+import CompendiumModal from "./features/compendium/CompendiumModal";
 // import Loot from "./features/loot/Loot"; // later
 
 type Tab = "journal" | "compendium" | "loot";
@@ -16,6 +16,11 @@ export default function App() {
         const saved = localStorage.getItem("tab") as Tab | null;
         return saved ?? "journal";
     });
+
+    //Compendium modal state
+    const [openCompendiumId, setOpenCompendiumId] = useState<string | null>(null);
+    const openCompendium = (id: string) => setOpenCompendiumId(id);
+    const closeCompendium = () => setOpenCompendiumId(null);
 
     // keep hash + localStorage in sync so reloads stay on the same tab
     useEffect(() => {
@@ -35,10 +40,13 @@ export default function App() {
             </header>
 
             <main className="content">
-                {tab === "journal" && <JournalTimeline />}
-                {tab === "compendium" && <CompendiumOverview />}
+                {tab === "journal" && <JournalTimeline onOpenCompendium={openCompendium} />}
+                {tab === "compendium" && <CompendiumOverview onOpenCompendium={openCompendium} />}
                 {tab === "loot" && <div>Loot coming soon…</div>}
             </main>
+            {openCompendiumId && (
+                <CompendiumModal id={openCompendiumId} onClose={closeCompendium} />
+            )}
         </div>
     );
 }

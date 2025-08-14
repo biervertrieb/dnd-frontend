@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import ReactMarkdown from "react-markdown";
+import "./compendium.css";
 import CompendiumEntryForm from "./CompendiumEntryForm";
 import type { CompendiumEntry } from "./types";
 

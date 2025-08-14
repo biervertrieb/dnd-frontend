@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import JournalEntryForm from "./JournalEntryForm";
 import type { JournalEntry } from "./types";
+import { transformWikiLinks } from "../../mdLinks.ts";
 
 import './journal.css'
 
@@ -16,7 +17,7 @@ function sideFor(id: string, mode: "alternate" | "hash" = "alternate", idx = 0):
     return (h & 1) === 0 ? "left" : "right";
 }
 
-export default function JournalTimeline() {
+export default function JournalTimeline({ onOpenCompendium, }: { onOpenCompendium?: (id: string) => void }) {
     const [entries, setEntries] = useState<JournalEntry[]>([]);
     const [loading, setLoading] = useState(true);
     const [focusedId, setFocusedId] = useState<string | null>(null);
@@ -57,6 +58,7 @@ export default function JournalTimeline() {
         setEditingId(null);
     }
 
+
     if (loading) return <div className="tl-wrapper"><div className="tl-loading">Loading timeline…</div></div>;
 
     return (
@@ -92,6 +94,7 @@ export default function JournalTimeline() {
                         const focused = focusedId === entry.id && !showCreate;
                         const editing = editingId === entry.id && focused;
 
+                        const body = transformWikiLinks(entry.body);
                         return (
                             <li key={entry.id} className={`tl-item ${side}`}>
                                 <div className={`tl-node ${focused ? "active" : ""}`} />
@@ -140,7 +143,23 @@ export default function JournalTimeline() {
                                     ) : (
                                         <div>
                                             <div className="tl-content markdown">
-                                                <ReactMarkdown>{entry.body}</ReactMarkdown>
+                                                <ReactMarkdown components={{
+                                                    a: ({ href, children, ...props }) => {
+                                                        if (href?.startsWith("compendium:")) {
+                                                            const id = href.slice("compendium:".length);
+                                                            return (
+                                                                <a
+                                                                    href="#"
+                                                                    onClick={(e) => { e.preventDefault(); onOpenCompendium?.(id); }}
+                                                                    {...props}
+                                                                >
+                                                                    {children}
+                                                                </a>
+                                                            );
+                                                        }
+                                                        return <a href={href} target="_blank" rel="noreferrer" {...props}>{children}</a>;
+                                                    }
+                                                }}>{body}</ReactMarkdown>
                                             </div>
                                             <footer>
                                                 <div>
