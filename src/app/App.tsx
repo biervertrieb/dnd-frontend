@@ -1,12 +1,19 @@
-import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Layout from "./Layout";
+import JournalPage from "../features/journal/JournalPage";
+import "./app.css";
+import JournalPage from "../features/journal/JournalPage";
+import "./app.css";
+import JournalPage from "../features/journal/JournalPage";
+import "./app.css";
+import JournalPage from "../features/journal/JournalPage";
+import "./app.css";
 
 const AppContent = () => {
     return (
         <Layout>
             <Routes>
-                <Route path="/journal" />
+                <Route path="/journal" element={<JournalPage />} />
                 <Route path="/compendium" />
                 <Route path="/loot" />
             </Routes>
