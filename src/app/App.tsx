@@ -2,12 +2,6 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Layout from "./Layout";
 import JournalPage from "../features/journal/JournalPage";
 import "./app.css";
-import JournalPage from "../features/journal/JournalPage";
-import "./app.css";
-import JournalPage from "../features/journal/JournalPage";
-import "./app.css";
-import JournalPage from "../features/journal/JournalPage";
-import "./app.css";
 
 const AppContent = () => {
     return (
