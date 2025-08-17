@@ -7,7 +7,7 @@ const AppContent = () => {
     return (
         <Layout>
             <Routes>
-                <Route path="/journal" element={<JournalPage />} />
+                <Route path="/" element={<JournalPage />} />
                 <Route path="/compendium" />
                 <Route path="/loot" />
             </Routes>
