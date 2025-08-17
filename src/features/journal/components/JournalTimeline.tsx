@@ -25,7 +25,6 @@ const JournalTimeline = () => {
 
     return (
         <div className="relative px-8">
-            <TimelineSpine />
             {
                 loading && (
                     <div className="text-yellow-400 text-lg pt-10">Loading timeline...</div>
