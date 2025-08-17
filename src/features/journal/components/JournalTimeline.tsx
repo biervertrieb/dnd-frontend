@@ -11,12 +11,15 @@ const TimelineSpine = () => {
 
 const JournalTimeline = () => {
     const [entries, setEntries] = useState<JournalEntry[]>([]);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         (async () => {
+            setLoading(true);
             const data = await getJournalEntries();
             data.sort((a, b) => parseInt(b.day) - parseInt(a.day));
             setEntries(data);
+            setLoading(false);
         })();
     }, []);
 
@@ -24,7 +27,12 @@ const JournalTimeline = () => {
         <div className="relative px-8">
             <TimelineSpine />
             {
-                entries.map((entry, index) => (
+                loading && (
+                    <div className="text-yellow-400 text-lg pt-10">Loading timeline...</div>
+                )}
+
+            {!loading && (<TimelineSpine />)
+                && entries.map((entry, index) => (
                     < div className={`relative mb-10 ${index % 2 === 0 ? 'mr-1/2 pr-10' : 'ml-1/2 pl-10'}`}>
                         <div className={`absolute w-4 h-4 bg-gradient-to-br from-yellow-400 to-yellow-500 border-4 border-amber-800 rounded-full top-8 shadow-lg shadow-yellow-500/60 ${index % 2 === 0 ? '-right-12' : '-left-12'}`}></div>
                         <JournalEntryCard
@@ -34,7 +42,8 @@ const JournalTimeline = () => {
                     </div>
                 ))
             }
-        </div >);
+        </div >
+    );
 }
 
 export default JournalTimeline;
