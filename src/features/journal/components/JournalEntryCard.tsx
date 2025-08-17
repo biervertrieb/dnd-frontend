@@ -1,37 +1,126 @@
+import { useState, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
 import type { JournalEntry } from "../types";
 
+type Mode = "create" | "edit";
+
 type Props = {
-    entry: JournalEntry,
-    isFocus: boolean,
-    onClick: () => void
+    mode: Mode,
+    entry?: Partial<JournalEntry> & { id?: string },
+    isExpanded?: boolean,
+    isEditing?: boolean,
+    isSaving?: boolean,
+    isDeleting?: boolean,
+    onClick?: () => void,
+    onStartEdit?: () => void,
+    onSave: (title: string, day: string, body: string) => void,
+    onCancel: () => void,
+    onDelete?: () => void
 }
 
-const JournalEntryCard = ({ entry, isFocus, onClick }: Props) => {
+const JournalEntryCard = ({ mode, entry, isExpanded, isDeleting, isEditing, isSaving, onClick, onSave, onStartEdit, onCancel, onDelete }: Props) => {
+
+    const [editTitle, setEditTitle] = useState<string>(entry?.title ?? "");
+    const [editDay, setEditDay] = useState<string>(entry?.day ?? "");
+    const [editBody, setEditBody] = useState<string>(entry?.body ?? "");
+    const editing = isEditing ?? false;
+    const saving = isSaving ?? false;
+    const deleting = isDeleting ?? false;
+
+    useEffect(() => {
+        setEditTitle(entry?.title ?? "");
+        setEditDay(entry?.day ?? "");
+        setEditBody(entry?.body ?? "");
+    }, [entry?.title, entry?.day, entry?.body]);
+
+    const handleSave = () => {
+        onSave(editTitle, editDay, editBody);
+    }
 
     return (
         <article onClick={onClick} className="px-8 py-8 bg-gradient-to-br from-amber-50/95 to-amber-100/95">
             <header>
-                <h3 className="text-2xl font-semibold text-amber-800 mb-1">Day {entry.day}: {entry.title}</h3>
+                {mode === "create" || editing ? (
+                    <div className="text-2xl font-semibold text-amber-800 mb-1">
+                        <span>Day </span>
+                        <input type="text"
+                            className="border-2 border-amber-800 rounded-lg w-10"
+                            value={editDay}
+                            onChange={(e) => setEditDay(e.target.value)}
+                        />
+                        <span> : </span>
+                        <input type="text"
+                            className="border-2 border-amber-800 rounded-lg"
+                            value={editTitle}
+                            onChange={(e) => setEditTitle(e.target.value)}
+                        />
+                    </div>
+                ) : (
+                    <h3 className="text-2xl font-semibold text-amber-800 mb-1">Day {entry?.day ?? "0"} : {entry?.title ?? "untitled"}</h3>
+                )}
             </header>
-            <div className="w-full px-4 py-4">
-                {isFocus && (
+            {mode === "create" || editing ? (
+                <textarea
+                    className="w-full text-justify bg-amber-50/80 border-2 border-amber-900 rounded-lg px-4 py-4 text-amber-900 text-lg leading-relaxed resize-y min-h-32 focus:outline-none focus:border-yellow-500 focus:shadow-lg focus:shadow-yellow-500/20"
+                    value={editBody}
+                    onChange={(e) => setEditBody(e.target.value)}
+                    rows={8}
+                ></textarea>
+            ) : isExpanded ? (
+                <div className="text-amber-900 text-lg leading-relaxed text-justify">
                     <ReactMarkdown>
-                        {entry.body}
+                        {entry?.body ?? ""}
                     </ReactMarkdown>
-                )}
-                {!isFocus && (
+                </div>
+            ) : (
+                <div className="text-amber-900 text-lg leading-relaxed line-clam-3 text-justify">
                     <ReactMarkdown>
-                        {snip(entry.body)}
+                        {snip(entry?.body ?? "")}
                     </ReactMarkdown>
-                )}
-            </div>
+                </div>
+            )}
+            {/* Controls */}
+            {deleting ? (
+                <div className="">deleting...</div>
+            ) : saving ? (
+                <div className="">saving...</div>
+            ) : mode === "create" || editing ? (
+                <div className="flex gap-3 mt-6 pt-5 border-t-2 border-amber-700/20">
+                    <button
+                        onClick={handleSave}
+                        className="bg-gradient-to-r from-green-800 to-green-700 border border-green-400 text-green-300 px-4 py-2 rounded-lg hover:from-green-700 hover:to-green-600 hover:shadow-lg transition-all duration-300 font-medium text-sm"
+                    >
+                        💾 Save
+                    </button>
+                    <button
+                        onClick={onCancel}
+                        className="bg-gradient-to-r from-amber-800 to-amber-700 border border-yellow-600 text-yellow-400 px-4 py-2 rounded-lg hover:from-amber-700 hover:to-amber-600 hover:shadow-lg transition-all duration-300 font-medium text-sm"
+                    >
+                        ❌ Cancel
+                    </button>
+                    {
+                        mode === "edit" && (
+                            <button onClick={onDelete}>DELETE</button>
+                        )
+                    }
+                </div>
+            ) : isExpanded && (
+                <div className="flex gap-3 mt-6 pt-5 border-t-2 border-amber-700/20">
+                    <button
+                        onClick={onStartEdit}
+                        className="bg-gradient-to-r from-amber-800 to-amber-700 border border-yellow-600 text-yellow-400 px-4 py-2 rounded-lg hover:from-amber-700 hover:to-amber-600 hover:shadow-lg transition-all duration-300 font-medium text-sm"
+                    >
+                        ✏️ Edit
+                    </button>
+                </div>
+            )}
         </article>
     );
 }
 
 export default JournalEntryCard;
 
-function snip(text: string): string {
+function snip(text?: string): string {
+    text = text ?? "";
     return "snip: " + text;
 }
