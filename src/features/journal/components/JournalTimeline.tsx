@@ -15,6 +15,7 @@ const JournalTimeline = () => {
     useEffect(() => {
         (async () => {
             const data = await getJournalEntries();
+            data.sort((a, b) => parseInt(b.day) - parseInt(a.day));
             setEntries(data);
         })();
     }, []);
