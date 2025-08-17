@@ -9,8 +9,7 @@ const JournalEntryCard = ({ entry }: Props) => {
     return (
         <article className="px-8 py-8 bg-gradient-to-br from-amber-50/95 to-amber-100/95">
             <header>
-                <h3 className="text-2xl font-semibold text-amber-800 mb-1">{entry.title}</h3>
-                <time></time>
+                <h3 className="text-2xl font-semibold text-amber-800 mb-1">Day {entry.day}: {entry.title}</h3>
             </header>
             <div>
                 <textarea
