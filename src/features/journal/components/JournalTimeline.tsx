@@ -12,6 +12,7 @@ const TimelineSpine = () => {
 const JournalTimeline = () => {
     const [entries, setEntries] = useState<JournalEntry[]>([]);
     const [loading, setLoading] = useState(true);
+    const [focusedId, setFocusedId] = useState<string | null>(null);
 
     useEffect(() => {
         (async () => {
@@ -19,6 +20,7 @@ const JournalTimeline = () => {
             const data = await getJournalEntries();
             data.sort((a, b) => parseInt(b.day) - parseInt(a.day));
             setEntries(data);
+            setFocusedId(data[0]?.id ?? null);
             setLoading(false);
         })();
     }, []);
@@ -37,6 +39,8 @@ const JournalTimeline = () => {
                         <JournalEntryCard
                             key={entry.id}
                             entry={entry}
+                            isFocus={focusedId === entry.id}
+                            onClick={() => setFocusedId(entry.id)}
                         />
                     </div>
                 ))
