@@ -54,7 +54,7 @@ const JournalEntryCard = ({ mode, entry, isExpanded, isDeleting, isEditing, isSa
                     <div className="text-2xl font-semibold text-amber-800 mb-1">
                         <span>Day </span>
                         <input type="text"
-                            className="border-2 border-amber-800 rounded-lg w-10"
+                            className="border-2 border-amber-800 rounded-lg w-10 text-center"
                             value={editDay}
                             onChange={(e) => setEditDay(e.target.value)}
                         />
