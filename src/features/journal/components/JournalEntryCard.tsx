@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import ReactMarkdown from "react-markdown";
 import type { JournalEntry } from "../types";
 import removeMd from "remove-markdown";
@@ -24,6 +24,9 @@ const JournalEntryCard = ({ mode, entry, isExpanded, isDeleting, isEditing, isSa
     const [editTitle, setEditTitle] = useState<string>(entry?.title ?? "");
     const [editDay, setEditDay] = useState<string>(entry?.day ?? "");
     const [editBody, setEditBody] = useState<string>(entry?.body ?? "");
+
+    const ref = useRef<HTMLElement>(null);
+
     const editing = isEditing ?? false;
     const saving = isSaving ?? false;
     const deleting = isDeleting ?? false;
@@ -34,12 +37,18 @@ const JournalEntryCard = ({ mode, entry, isExpanded, isDeleting, isEditing, isSa
         setEditBody(entry?.body ?? "");
     }, [entry?.title, entry?.day, entry?.body]);
 
+    useEffect(() => {
+        if (isExpanded && ref.current) {
+            ref.current.scrollIntoView({ behavior: "smooth", block: "start" })
+        }
+    }, [isExpanded]);
+
     const handleSave = () => {
         onSave(editTitle, editDay, editBody);
     }
 
     return (
-        <article onClick={onClick} className="px-8 py-8 bg-gradient-to-br from-amber-50/95 to-amber-100/95">
+        <article ref={ref} onClick={onClick} className="px-8 py-8 bg-gradient-to-br from-amber-50/95 to-amber-100/95">
             <header>
                 {mode === "create" || editing ? (
                     <div className="text-2xl font-semibold text-amber-800 mb-1">
