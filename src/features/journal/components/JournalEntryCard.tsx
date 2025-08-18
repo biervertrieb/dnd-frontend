@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import ReactMarkdown from "react-markdown";
 import type { JournalEntry } from "../types";
-import removeMd from "remove-markdown";
+import { snip } from "../../../shared/util";
 
 type Mode = "create" | "edit";
 
@@ -129,38 +129,3 @@ const JournalEntryCard = ({ mode, entry, isExpanded, isDeleting, isEditing, isSa
 }
 
 export default JournalEntryCard;
-
-function snip(
-    text?: string,
-    maxLength?: number,
-    options: {
-        preserveWords?: boolean;
-        suffix?: string;
-    } = {}
-): string {
-    const {
-        preserveWords = true,
-        suffix = "..."
-    } = options;
-    text = text ?? "";
-    maxLength = maxLength ?? 160;
-
-    const stripped = removeMd(text);
-
-    if (stripped.length <= maxLength)
-        return stripped;
-
-    let truncated = stripped.substring(0, maxLength);
-
-    if (preserveWords) {
-        const lastSpace = truncated.lastIndexOf(' ');
-        const lastNewline = truncated.lastIndexOf('\n');
-        const lastBoundary = Math.max(lastSpace, lastNewline);
-
-        if (lastBoundary > maxLength * 0.75) {
-            truncated = truncated.substring(0, lastBoundary);
-        }
-    }
-
-    return truncated.trim() + suffix;
-}
