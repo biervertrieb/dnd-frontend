@@ -1,31 +1,13 @@
 import { useState } from "react";
 import CompendiumOverview from "./components/CompendiumOverview";
 import CompendiumEntryCard from "./components/CompendiumEntryCard";
+import type { CompendiumEntry } from "../types";
 import { createCompendiumEntry } from "./api";
+import { useComentiumStore } from "./CompendiumStore";
 
 const CompendiumPage = () => {
-    const [showNewEntry, setShowNewEntry] = useState(false);
-    const [saving, setSaving] = useState(false);
-    const [reloadKey, setReloadKey] = useState(0);
-
-    const createEntry = async (title: string, tags: string, body: string) => {
-        if (!title.trim()) {
-            alert("Title is required");
-            return;
-        }
-        setSaving(true);
-        try {
-            await createCompendiumEntry(title, tags, body)
-            setShowNewEntry(false);
-            setReloadKey((k) => k + 1);
-        }
-        catch (e) {
-            console.error(e);
-            alert("Failed to update entry.");
-        } finally {
-            setSaving(false);
-        }
-    }
+    const showNewEntry = useComentiumStore((s) => s.showNewEntry);
+    const createEntry = useComentiumStore((s) => s.createEntry);
 
     return (
         <div className="max-w-4xl mx-auto px-5 py-10 mt-32">
@@ -36,7 +18,7 @@ const CompendiumPage = () => {
             {showNewEntry && (
                 <CompendiumEntryCard
                     mode="create"
-                    onCancel={() => setShowNewEntry(false)}
+                    onCancel={() => (false)}
                     onSave={(title, tags, body) => createEntry(title, tags, body)}
                     isSaving={saving}
                 />
