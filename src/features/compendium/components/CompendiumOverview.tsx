@@ -9,7 +9,8 @@ const CompendiumOverview = () => {
     const setEntries = useCompendiumStore((s) => s.setEntries);
     const loading = useCompendiumStore((s) => s.loading);
     const setLoading = useCompendiumStore((s) => s.setLoading);
-    const [focusedId, setFocusedId] = useState<string | null>(null);
+    const focusedId = useCompendiumStore((s) => s.focusedId);
+    const setFocusedId = useCompendiumStore((s) => s.setFocusedId);
     const [editing, setEditing] = useState(false);
     const [deleting, setDeleting] = useState(false);
     const [saving, setSaving] = useState(false);

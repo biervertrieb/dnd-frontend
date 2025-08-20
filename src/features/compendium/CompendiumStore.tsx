@@ -7,12 +7,14 @@ type CompendiumState = {
     showNewEntry: boolean,
     savingNew: boolean,
     loading: boolean,
+    focusedId: string | null,
 }
 
 type CompendiumActions = {
     setShowNewEntry: (showState: boolean) => void,
     setSavingNew: (savingNewState: boolean) => void,
     setLoading: (loading: boolean) => void,
+    setFocusedId: (focusedId: string | null) => void,
     setEntries: (entries: CompendiumEntry[]) => void,
     createEntry: (title: string, tags: string, body: string) => Promise<void>,
 }
@@ -27,9 +29,11 @@ export const useCompendiumStore = create<CompendiumState & CompendiumActions>()(
         showNewEntry: false,
         savingNew: false,
         loading: false,
+        focusedId: null,
         setShowNewEntry: (showState) => set(() => ({ showNewEntry: showState })),
         setSavingNew: (savingNewState) => set(() => ({ savingNew: savingNewState })),
         setLoading: (loading) => set(() => ({ loading: loading })),
+        setFocusedId: (focusedId) => set(() => ({ focusedId: focusedId })),
         setEntries: (entries) => set(() => ({ entries: entries })),
         createEntry: async (title, tags, body) => {
             if (!title.trim()) {
