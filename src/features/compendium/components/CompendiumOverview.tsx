@@ -19,6 +19,7 @@ const CompendiumOverview = () => {
     const setSaving = useCompendiumStore((s) => s.setSaving);
 
     const updateEntry = useCompendiumStore((s) => s.updateEntry);
+    const deleteEntry = useCompendiumStore((s) => s.deleteEntry);
 
     useEffect(() => {
         (async () => {
@@ -43,24 +44,6 @@ const CompendiumOverview = () => {
     const startEdit = (id: string) => {
         setFocusedId(id);
         setEditing(true);
-    }
-
-    const deleteEntry = async (id: string) => {
-        if (!confirm("Delete this compendium entry?")) return;
-        setDeleting(true);
-        setFocusedId(id);
-        try {
-            await deleteCompendiumEntry(id);
-            const updatedEntries = entries.filter((e) => e.id !== id);
-            setEntries(updatedEntries);
-            setEditing(false);
-            setFocusedId(null);
-        } catch (e) {
-            console.error(e);
-            alert("Failed to delete entry.");
-        } finally {
-            setDeleting(false);
-        }
     }
 
     return (

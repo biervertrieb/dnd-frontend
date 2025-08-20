@@ -24,6 +24,7 @@ type CompendiumActions = {
     setEntries: (entries: CompendiumEntry[]) => void,
     createEntry: (title: string, tags: string, body: string) => Promise<void>,
     updateEntry: (id: string, title: string, tags: string, body: string) => Promise<void>,
+    deleteEntry: (id: string) => Promise<void>,
 }
 
 const sortEntries = (entries: CompendiumEntry[]) => {
@@ -85,6 +86,24 @@ export const useCompendiumStore = create<CompendiumState & CompendiumActions>()(
                 alert("Failed to update entry!");
             } finally {
                 set({ saving: false })
+            }
+        },
+        deleteEntry: async (id) => {
+            if (!confirm("Delete this compendium entry?")) return;
+            set({ focusedId: id })
+            set({ deleting: true });
+            try {
+                await deleteCompendiumEntry(id);
+                set({ editing: false });
+                set({ focusedId: null })
+                const prev = get().entries;
+                const updatedEntries = prev.filter((e) => e.id !== id);
+                set({ entries: sortEntries(updatedEntries) });
+            } catch (e) {
+                console.error(e);
+                alert("Failed to delete entry!");
+            } finally {
+                set({ deleting: false })
             }
         },
     })
