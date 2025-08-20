@@ -20,16 +20,10 @@ const CompendiumOverview = () => {
 
     const updateEntry = useCompendiumStore((s) => s.updateEntry);
     const deleteEntry = useCompendiumStore((s) => s.deleteEntry);
+    const loadEntries = useCompendiumStore((s) => s.loadEntries);
 
     useEffect(() => {
-        (async () => {
-            setLoading(true);
-            const data = await getCompendiumEntries();
-            data.sort((a, b) => parseInt(b.title.toLowerCase()) - parseInt(a.title.toLowerCase()));
-            setEntries(data);
-            setFocusedId(data[0]?.id ?? null);
-            setLoading(false);
-        })();
+        loadEntries();
     }, []);
 
     const handleClick = (id: string) => {

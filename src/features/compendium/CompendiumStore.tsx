@@ -25,6 +25,7 @@ type CompendiumActions = {
     createEntry: (title: string, tags: string, body: string) => Promise<void>,
     updateEntry: (id: string, title: string, tags: string, body: string) => Promise<void>,
     deleteEntry: (id: string) => Promise<void>,
+    loadEntries: () => Promise<void>;
 }
 
 const sortEntries = (entries: CompendiumEntry[]) => {
@@ -60,6 +61,7 @@ export const useCompendiumStore = create<CompendiumState & CompendiumActions>()(
                 set({ showNewEntry: false });
                 const prev = get().entries;
                 set({ entries: sortEntries([newEntry, ...prev]) });
+                set({ focusedId: newEntry.id });
 
             } catch (e) {
                 console.error(e);
@@ -106,5 +108,17 @@ export const useCompendiumStore = create<CompendiumState & CompendiumActions>()(
                 set({ deleting: false })
             }
         },
+        loadEntries: async () => {
+            set({ loading: true });
+            try {
+                const data = await getCompendiumEntries();
+                set({ entries: sortEntries(data) });
+            } catch (e) {
+                console.error(e);
+                alert("Failed to load entries!");
+            } finally {
+                set({ loading: false })
+            }
+        }
     })
 )
