@@ -6,17 +6,13 @@ import { useCompendiumStore } from "../CompendiumStore";
 
 const CompendiumOverview = () => {
     const entries = useCompendiumStore((s) => s.entries);
-    const setEntries = useCompendiumStore((s) => s.setEntries);
     const loading = useCompendiumStore((s) => s.loading);
-    const setLoading = useCompendiumStore((s) => s.setLoading);
     const focusedId = useCompendiumStore((s) => s.focusedId);
     const setFocusedId = useCompendiumStore((s) => s.setFocusedId);
     const editing = useCompendiumStore((s) => s.editing);
     const deleting = useCompendiumStore((s) => s.deleting);
     const saving = useCompendiumStore((s) => s.saving);
     const setEditing = useCompendiumStore((s) => s.setEditing);
-    const setDeleting = useCompendiumStore((s) => s.setDeleting);
-    const setSaving = useCompendiumStore((s) => s.setSaving);
 
     const updateEntry = useCompendiumStore((s) => s.updateEntry);
     const deleteEntry = useCompendiumStore((s) => s.deleteEntry);
