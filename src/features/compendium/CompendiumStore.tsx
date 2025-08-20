@@ -72,6 +72,7 @@ export const useCompendiumStore = create<CompendiumState & CompendiumActions>()(
                 alert("Title is required!");
                 return;
             }
+            set({ focusedId: id })
             set({ saving: true });
             try {
                 const updatedEntry = await updateCompendiumEntry(id, title, tags, body);
