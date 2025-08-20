@@ -18,6 +18,8 @@ const CompendiumOverview = () => {
     const setDeleting = useCompendiumStore((s) => s.setDeleting);
     const setSaving = useCompendiumStore((s) => s.setSaving);
 
+    const updateEntry = useCompendiumStore((s) => s.updateEntry);
+
     useEffect(() => {
         (async () => {
             setLoading(true);
@@ -41,27 +43,6 @@ const CompendiumOverview = () => {
     const startEdit = (id: string) => {
         setFocusedId(id);
         setEditing(true);
-    }
-
-    const saveEdit = async (id: string, title: string, tags: string, body: string) => {
-        if (!title.trim()) {
-            alert("Title is required");
-            return;
-        }
-        setSaving(true);
-        setFocusedId(id);
-        try {
-            await updateCompendiumEntry(id, title, tags, body)
-            setEditing(false);
-            const updatedEntries = entries.map(entry => entry.id === id ? { ...entry, title: title, tags: tags, body: body } : entry);
-            setEntries(updatedEntries);
-        }
-        catch (e) {
-            console.error(e);
-            alert("Failed to update entry.");
-        } finally {
-            setSaving(false);
-        }
     }
 
     const deleteEntry = async (id: string) => {
@@ -101,7 +82,7 @@ const CompendiumOverview = () => {
                         onClick={() => handleClick(entry.id)}
                         onCancel={() => cancelEdit(entry.id)}
                         onStartEdit={() => startEdit(entry.id)}
-                        onSave={(title, tags, body) => saveEdit(entry.id, title, tags, body)}
+                        onSave={(title, tags, body) => updateEntry(entry.id, title, tags, body)}
                         onDelete={() => deleteEntry(entry.id)}
                     />
                 </div>

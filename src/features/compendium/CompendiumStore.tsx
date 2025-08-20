@@ -23,6 +23,7 @@ type CompendiumActions = {
     setFocusedId: (focusedId: string | null) => void,
     setEntries: (entries: CompendiumEntry[]) => void,
     createEntry: (title: string, tags: string, body: string) => Promise<void>,
+    updateEntry: (id: string, title: string, tags: string, body: string) => Promise<void>,
 }
 
 const sortEntries = (entries: CompendiumEntry[]) => {
@@ -64,6 +65,25 @@ export const useCompendiumStore = create<CompendiumState & CompendiumActions>()(
                 alert("Failed to create entry!");
             } finally {
                 set({ savingNew: false })
+            }
+        },
+        updateEntry: async (id, title, tags, body) => {
+            if (!title.trim()) {
+                alert("Title is required!");
+                return;
+            }
+            set({ saving: true });
+            try {
+                const updatedEntry = await updateCompendiumEntry(id, title, tags, body);
+                set({ editing: false });
+                const prev = get().entries;
+                const updatedEntries = prev.map(entry => entry.id === id ? { ...entry, title: title, tags: tags, body: body } : entry);
+                set({ entries: sortEntries(updatedEntries) });
+            } catch (e) {
+                console.error(e);
+                alert("Failed to update entry!");
+            } finally {
+                set({ saving: false })
             }
         },
     })
