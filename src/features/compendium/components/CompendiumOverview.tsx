@@ -7,7 +7,8 @@ import { useCompendiumStore } from "../CompendiumStore";
 const CompendiumOverview = () => {
     const entries = useCompendiumStore((s) => s.entries);
     const setEntries = useCompendiumStore((s) => s.setEntries);
-    const [loading, setLoading] = useState(true);
+    const loading = useCompendiumStore((s) => s.loading);
+    const setLoading = useCompendiumStore((s) => s.setLoading);
     const [focusedId, setFocusedId] = useState<string | null>(null);
     const [editing, setEditing] = useState(false);
     const [deleting, setDeleting] = useState(false);
