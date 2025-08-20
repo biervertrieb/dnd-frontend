@@ -1,5 +1,4 @@
 import { useEffect } from "react";
-import type { CompendiumEntry } from "../types";
 import CompendiumEntryCard from "./CompendiumEntryCard";
 import { useCompendiumStore } from "../CompendiumStore";
 
