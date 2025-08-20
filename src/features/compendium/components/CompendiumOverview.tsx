@@ -4,11 +4,7 @@ import CompendiumEntryCard from "./CompendiumEntryCard";
 import { getCompendiumEntries, deleteCompendiumEntry, updateCompendiumEntry } from "../api";
 import { useCompendiumStore } from "../CompendiumStore";
 
-type Props = {
-    reloadKey: number
-}
-
-const CompendiumOverview = ({ reloadKey }: Props) => {
+const CompendiumOverview = () => {
     const entries = useCompendiumStore((s) => s.entries);
     const setEntries = useCompendiumStore((s) => s.setEntries);
     const [loading, setLoading] = useState(true);
@@ -26,7 +22,7 @@ const CompendiumOverview = ({ reloadKey }: Props) => {
             setFocusedId(data[0]?.id ?? null);
             setLoading(false);
         })();
-    }, [reloadKey]);
+    }, []);
 
     const handleClick = (id: string) => {
         !editing && setFocusedId(id);
