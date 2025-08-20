@@ -2,13 +2,15 @@ import { useState, useEffect } from "react";
 import type { CompendiumEntry } from "../types";
 import CompendiumEntryCard from "./CompendiumEntryCard";
 import { getCompendiumEntries, deleteCompendiumEntry, updateCompendiumEntry } from "../api";
+import { useCompendiumStore } from "../CompendiumStore";
 
 type Props = {
     reloadKey: number
 }
 
 const CompendiumOverview = ({ reloadKey }: Props) => {
-    const [entries, setEntries] = useState<CompendiumEntry[]>([]);
+    const entries = useCompendiumStore((s) => s.entries);
+    const setEntries = useCompendiumStore((s) => s.setEntries);
     const [loading, setLoading] = useState(true);
     const [focusedId, setFocusedId] = useState<string | null>(null);
     const [editing, setEditing] = useState(false);
@@ -50,9 +52,8 @@ const CompendiumOverview = ({ reloadKey }: Props) => {
         try {
             await updateCompendiumEntry(id, title, tags, body)
             setEditing(false);
-            setEntries(prev => prev.map(entry =>
-                entry.id === id ? { ...entry, title: title, tags: tags, body: body } : entry
-            ));
+            const updatedEntries = entries.map(entry => entry.id === id ? { ...entry, title: title, tags: tags, body: body } : entry);
+            setEntries(updatedEntries);
         }
         catch (e) {
             console.error(e);
@@ -68,7 +69,8 @@ const CompendiumOverview = ({ reloadKey }: Props) => {
         setFocusedId(id);
         try {
             await deleteCompendiumEntry(id);
-            setEntries((prev) => prev.filter((e) => e.id !== id))
+            const updatedEntries = entries.filter((e) => e.id !== id);
+            setEntries(updatedEntries);
             setEditing(false);
             setFocusedId(null);
         } catch (e) {
