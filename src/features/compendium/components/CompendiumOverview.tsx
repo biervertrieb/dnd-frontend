@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import type { CompendiumEntry } from "../types";
 import CompendiumEntryCard from "./CompendiumEntryCard";
-import { getCompendiumEntries, deleteCompendiumEntry, updateCompendiumEntry } from "../api";
 import { useCompendiumStore } from "../CompendiumStore";
 
 const CompendiumOverview = () => {
