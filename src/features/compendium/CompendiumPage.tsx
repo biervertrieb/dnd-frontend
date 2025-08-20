@@ -5,8 +5,8 @@ import { createCompendiumEntry } from "./api";
 import { useCompendiumStore } from "./CompendiumStore";
 
 const CompendiumPage = () => {
-    const showNewEntry = useCompendiumStore().showNewEntry;
-    const setShowNewEntry = useCompendiumStore().setShowNewEntry;
+    const showNewEntry = useCompendiumStore((s) => s.showNewEntry);
+    const setShowNewEntry = useCompendiumStore((s) => s.setShowNewEntry);
     //const [showNewEntry, setShowNewEntry] = useState(false);
     const [saving, setSaving] = useState(false);
     const [reloadKey, setReloadKey] = useState(0);
