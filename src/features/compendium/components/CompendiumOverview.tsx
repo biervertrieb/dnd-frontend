@@ -11,9 +11,12 @@ const CompendiumOverview = () => {
     const setLoading = useCompendiumStore((s) => s.setLoading);
     const focusedId = useCompendiumStore((s) => s.focusedId);
     const setFocusedId = useCompendiumStore((s) => s.setFocusedId);
-    const [editing, setEditing] = useState(false);
-    const [deleting, setDeleting] = useState(false);
-    const [saving, setSaving] = useState(false);
+    const editing = useCompendiumStore((s) => s.editing);
+    const deleting = useCompendiumStore((s) => s.deleting);
+    const saving = useCompendiumStore((s) => s.saving);
+    const setEditing = useCompendiumStore((s) => s.setEditing);
+    const setDeleting = useCompendiumStore((s) => s.setDeleting);
+    const setSaving = useCompendiumStore((s) => s.setSaving);
 
     useEffect(() => {
         (async () => {
