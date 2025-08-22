@@ -1,35 +1,13 @@
-import { useState } from "react";
 import JournalTimeline from "./components/JournalTimeline";
 import JournalEntryCard from "./components/JournalEntryCard";
-import { createJournalEntry } from "./api";
+import { useJournalStore } from "./JournalStore";
 
 const JournalPage = () => {
-    const [showNewEntry, setShowNewEntry] = useState(false);
-    const [saving, setSaving] = useState(false);
-    const [reloadKey, setReloadKey] = useState(0);
+    const showNewEntry = useJournalStore((s) => s.showNewEntry);
+    const setShowNewEntry = useJournalStore((s) => s.setShowNewEntry);
+    const saving = useJournalStore((s) => s.savingNew);
 
-    const createEntry = async (title: string, day: string, body: string) => {
-        if (!title.trim()) {
-            alert("Title is required");
-            return;
-        }
-        if (isNaN(parseInt(day))) {
-            alert("Day must be a valid number");
-            return;
-        }
-        setSaving(true);
-        try {
-            await createJournalEntry(title, day, body)
-            setShowNewEntry(false);
-            setReloadKey((k) => k + 1);
-        }
-        catch (e) {
-            console.error(e);
-            alert("Failed to update entry.");
-        } finally {
-            setSaving(false);
-        }
-    }
+    const createEntry = useJournalStore((s) => s.createEntry);
 
     return (
         <div className="max-w-4xl mx-auto px-5 py-10 mt-32">
@@ -45,9 +23,7 @@ const JournalPage = () => {
                     isSaving={saving}
                 />
             )}
-            <JournalTimeline
-                reloadKey={reloadKey}
-            />
+            <JournalTimeline />
         </div>
     );
 };

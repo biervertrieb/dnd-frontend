@@ -1,7 +1,6 @@
-import { useState, useEffect } from "react";
-import type { JournalEntry } from "../types";
+import { useEffect } from "react";
 import JournalEntryCard from "./JournalEntryCard";
-import { getJournalEntries, deleteJournalEntry, updateJournalEntry } from "../api";
+import { useJournalStore } from "../JournalStore";
 
 
 const TimelineSpine = () => {
@@ -10,28 +9,24 @@ const TimelineSpine = () => {
     );
 }
 
-type Props = {
-    reloadKey: number
-}
+const JournalTimeline = () => {
+    const saving = useJournalStore((s) => s.saving);
+    const entries = useJournalStore((s) => s.entries);
+    const loading = useJournalStore((s) => s.loading);
+    const focusedId = useJournalStore((s) => s.focusedId);
+    const editing = useJournalStore((s) => s.editing);
+    const deleting = useJournalStore((s) => s.deleting);
 
-const JournalTimeline = ({ reloadKey }: Props) => {
-    const [entries, setEntries] = useState<JournalEntry[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [focusedId, setFocusedId] = useState<string | null>(null);
-    const [editing, setEditing] = useState(false);
-    const [deleting, setDeleting] = useState(false);
-    const [saving, setSaving] = useState(false);
+    const setFocusedId = useJournalStore((s) => s.setFocusedId);
+    const setEditing = useJournalStore((s) => s.setEditing);
+
+    const loadEntries = useJournalStore((s) => s.loadEntries);
 
     useEffect(() => {
         (async () => {
-            setLoading(true);
-            const data = await getJournalEntries();
-            data.sort((a, b) => parseInt(b.day) - parseInt(a.day));
-            setEntries(data);
-            setFocusedId(data[0]?.id ?? null);
-            setLoading(false);
+            loadEntries();
         })();
-    }, [reloadKey]);
+    }, []);
 
     const handleClick = (id: string) => {
         !editing && setFocusedId(id);
@@ -47,48 +42,9 @@ const JournalTimeline = ({ reloadKey }: Props) => {
         setEditing(true);
     }
 
-    const saveEdit = async (id: string, title: string, day: string, body: string) => {
-        if (!title.trim()) {
-            alert("Title is required");
-            return;
-        }
-        if (isNaN(parseInt(day))) {
-            alert("Day must be a valid number");
-            return;
-        }
-        setSaving(true);
-        setFocusedId(id);
-        try {
-            await updateJournalEntry(id, title, day, body)
-            setEditing(false);
-            setEntries(prev => prev.map(entry =>
-                entry.id === id ? { ...entry, title: title, day: day, body: body } : entry
-            ));
-        }
-        catch (e) {
-            console.error(e);
-            alert("Failed to update entry.");
-        } finally {
-            setSaving(false);
-        }
-    }
+    const saveEdit = useJournalStore((s) => s.updateEntry);
 
-    const deleteEntry = async (id: string) => {
-        if (!confirm("Delete this journal entry?")) return;
-        setDeleting(true);
-        setFocusedId(id);
-        try {
-            await deleteJournalEntry(id);
-            setEntries((prev) => prev.filter((e) => e.id !== id))
-            setEditing(false);
-            setFocusedId(null);
-        } catch (e) {
-            console.error(e);
-            alert("Failed to delete entry.");
-        } finally {
-            setDeleting(false);
-        }
-    }
+    const deleteEntry = useJournalStore((s) => s.deleteEntry);
 
     return (
         <div className="relative px-8">
