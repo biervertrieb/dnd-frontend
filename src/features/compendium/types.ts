@@ -1,5 +1,6 @@
 export interface CompendiumEntry {
     id: string;
+    slug: string;
     title: string;
     body: string;
     tags: string;
