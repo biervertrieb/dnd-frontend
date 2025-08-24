@@ -7,6 +7,13 @@ interface ModalProps {
     size?: 'sm' | 'md' | 'lg' | 'xl';
 }
 
+const sizeClasses: Record<NonNullable<ModalProps["size"]>, string> = {
+    sm: "max-w-sm",
+    md: "max-w-lg",
+    lg: "max-w-2xl",
+    xl: "max-w-4xl",
+};
+
 const Modal = ({ children, className = '', size = 'md' }: ModalProps) => {
     useEffect(() => {
 
@@ -33,11 +40,17 @@ const Modal = ({ children, className = '', size = 'md' }: ModalProps) => {
     }
 
     return (
-        <div
-            className="fixed inset-0 z-50 flex items-start justify-center bg-black/50 backdrop-blur-sm overflow-y-auto"
-            className="modal-overlay"
-            onClick={handleBackdropClick}>
-            <div className={`modal-content modal-${size} ${className}`}>
+        <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/50 backdrop-blur-sm overflow-y-auto" onClick={handleBackdropClick}>
+            <div className={[
+                "relative w-full",             // take full width, then clamp by max-w-*
+                sizeClasses[size],
+                "mx-4 sm:mx-6 mt-16 mb-10",    // margins around the panel
+                "rounded-xl border border-neutral-200/70 bg-white shadow-xl",
+                "dark:bg-neutral-900 dark:border-neutral-700",
+                "max-h-[85vh] overflow-auto",  // scroll inside if content tall
+                "p-4 sm:p-6",
+                className,
+            ].join(" ")}>
                 <button
                     onClick={handleClose}
                     className="modal-close-btn"
