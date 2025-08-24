@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
-import ReactMarkdown from "react-markdown";
 import type { JournalEntry } from "../types";
 import { snip } from "../../../shared/util";
+import MarkdownWithRouter from "../../../shared/MarkdownWithRouter";
 
 type Mode = "create" | "edit";
 
@@ -78,15 +78,11 @@ const JournalEntryCard = ({ mode, entry, isExpanded, isDeleting, isEditing, isSa
                 ></textarea>
             ) : isExpanded ? (
                 <div className="text-amber-900 text-lg leading-relaxed text-justify">
-                    <ReactMarkdown>
-                        {entry?.body ?? ""}
-                    </ReactMarkdown>
+                    <MarkdownWithRouter markdown={entry?.body ?? ""} />
                 </div>
             ) : (
                 <div className="text-amber-900 text-lg leading-relaxed line-clam-3 text-justify">
-                    <ReactMarkdown>
-                        {snip(entry?.body ?? "")}
-                    </ReactMarkdown>
+                    <MarkdownWithRouter markdown={snip(entry?.body ?? "")} />
                 </div>
             )}
             {/* Controls */}

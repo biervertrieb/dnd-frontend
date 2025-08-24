@@ -33,7 +33,10 @@ const Modal = ({ children, className = '', size = 'md' }: ModalProps) => {
     }
 
     return (
-        <div className="modal-overlay" onClick={handleBackdropClick}>
+        <div
+            className="fixed inset-0 z-50 flex items-start justify-center bg-black/50 backdrop-blur-sm overflow-y-auto"
+            className="modal-overlay"
+            onClick={handleBackdropClick}>
             <div className={`modal-content modal-${size} ${className}`}>
                 <button
                     onClick={handleClose}
