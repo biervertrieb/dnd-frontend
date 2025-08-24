@@ -19,14 +19,6 @@ export async function getCompendiumEntryByID(id: string): Promise<CompendiumEntr
     throw new Error(res.message ?? "something went horribly wrong with the API");
 }
 
-export async function getCompendiumEntryBySlug(slug: string): Promise<CompendiumEntry> {
-    const res = await apiGet<CompendiumApiResponse>(`/compendium/${slug}`);
-    if (res.status === "ok" && res.entry !== undefined) {
-        return res.entry;
-    }
-    throw new Error(res.message ?? "something went horribly wrong with the API");
-}
-
 export async function createCompendiumEntry(title: string, tags: string, body: string): Promise<CompendiumEntry> {
     let data = {
         "title": title,
