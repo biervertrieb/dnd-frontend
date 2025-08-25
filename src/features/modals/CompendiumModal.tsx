@@ -2,9 +2,9 @@ import { useAppStore } from "../../app/AppStore";
 import Modal from "./Modal";
 
 const CompendiumModal = () => {
-    const showingCompendiumNote = useAppStore((s) => s.showingCompendiumNote);
+    const showing = useAppStore((s) => s.showingCompendiumNote);
 
-    if (!showingCompendiumNote) return null;
+    if (!showing) return null;
     return (
         <Modal>
             <div>Compendium Card coming soon...</div>
