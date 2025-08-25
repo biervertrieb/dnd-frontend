@@ -1,4 +1,5 @@
 import { useAppStore } from "../../app/AppStore";
+import { styleCardBody, styleCardText, styleCardTitle } from "../../shared/styles";
 import Modal from "./Modal";
 
 const CompendiumModal = () => {
@@ -14,7 +15,14 @@ const CompendiumModal = () => {
             ) : err ? (
                 <div style={{ color: "#6b7280", fontSize: 13, marginBottom: 6 }}>{err}</div>
             ) : (
-                <div>Compendium Card coming soon...</div>
+                <div className={styleCardBody}>
+                    <div className={styleCardTitle}>
+                        Compendium Card
+                    </div>
+                    <div className={styleCardText}>
+                        coming soon...
+                    </div>
+                </div>
             )}
         </Modal>
     );
