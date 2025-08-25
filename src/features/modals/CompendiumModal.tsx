@@ -15,14 +15,14 @@ const CompendiumModal = () => {
             ) : err ? (
                 <div style={{ color: "#6b7280", fontSize: 13, marginBottom: 6 }}>{err}</div>
             ) : (
-                <div className={styleCardBody}>
+                <>
                     <div className={styleCardTitle}>
                         Compendium Card
                     </div>
                     <div className={styleCardText}>
                         coming soon...
                     </div>
-                </div>
+                </>
             )}
         </Modal>
     );
