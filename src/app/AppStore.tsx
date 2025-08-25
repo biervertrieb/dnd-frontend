@@ -6,6 +6,7 @@ type AppState = {
     openedCompendiumNote: CompendiumEntry | null,
     showingCompendiumNote: boolean,
     compendiumLoading: boolean,
+    error: string | null,
 }
 
 type AppActions = {
@@ -18,6 +19,7 @@ export const useAppStore = create<AppState & AppActions>()(
         openedCompendiumNote: null,
         showingCompendiumNote: false,
         compendiumLoading: false,
+        error: null,
         closeCompendiumNote: () => {
             set({ showingCompendiumNote: false });
         },
@@ -30,13 +32,12 @@ export const useAppStore = create<AppState & AppActions>()(
             try {
                 const loaded = await getCompendiumEntryByID(id);
                 set({ openedCompendiumNote: loaded });
+                set({ error: null });
             } catch (e) {
-                alert("Failed to load compendium entry");
-                console.error(e);
-                set({ showingCompendiumNote: false })
+                set({ error: (e as Error).message })
             } finally {
                 set({ compendiumLoading: false });
             }
-        }
+        },
     })
 )
