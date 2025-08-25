@@ -1,29 +1,36 @@
-import ReactMarkdown from "react-markdown";
-import { useLocation, useNavigate } from "react-router-dom"
+import ReactMarkdown, { defaultUrlTransform } from "react-markdown";
+import { useAppStore } from "../app/AppStore";
 
 const CustomMarkdown = ({ markdown }: { markdown: string }) => {
+    const openNote = useAppStore((s) => s.openCompendiumNote);
 
     return (
         <ReactMarkdown
+            urlTransform={(url) => {
+                if (url.startsWith('compendium:'))
+                    return url;
+                return defaultUrlTransform(url);
+            }}
             components={{
-                a({ node, href, children, ...props }) {
+                a: ({ href, children, ...props }) => {
                     if (href?.startsWith('compendium:')) {
-                        const noteId = href.substring('compendium:'.length);
+                        const noteId = href.replace('compendium:', '');
                         return (
                             <button
                                 className="text-blue-600 underline cursor-pointer"
-                                onClick={() => openNoteModal(noteId)}
+                                onClick={() => openNote(noteId)}
                             >
                                 {children}
-                            </button>);
+                            </button>
+                        );
                     }
-
-                    return <a {...props} href={href}>{children}</a>
+                    return <a href={href} {...props} > {children}</a>
                 }
+
             }}
         >
             {markdown}
-        </ReactMarkdown>
+        </ReactMarkdown >
     )
 }
 
