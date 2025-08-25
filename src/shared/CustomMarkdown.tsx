@@ -1,4 +1,5 @@
 import ReactMarkdown, { defaultUrlTransform } from "react-markdown";
+import remarkGfm from "remark-gfm";
 import { useAppStore } from "../app/AppStore";
 
 const CustomMarkdown = ({ markdown }: { markdown: string }) => {
@@ -11,6 +12,7 @@ const CustomMarkdown = ({ markdown }: { markdown: string }) => {
                     return url;
                 return defaultUrlTransform(url);
             }}
+            remarkPlugins={[remarkGfm]}
             components={{
                 a: ({ href, children, ...props }) => {
                     if (href?.startsWith('compendium:')) {
