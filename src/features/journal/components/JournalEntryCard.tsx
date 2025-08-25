@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import type { JournalEntry } from "../types";
 import { snip } from "../../../shared/util";
 import CustomMarkdown from "../../../shared/CustomMarkdown";
+import { styleCardText, styleCardTextSnip } from "../../../shared/styles";
 
 type Mode = "create" | "edit";
 
@@ -77,11 +78,11 @@ const JournalEntryCard = ({ mode, entry, isExpanded, isDeleting, isEditing, isSa
                     rows={8}
                 ></textarea>
             ) : isExpanded ? (
-                <div className="text-amber-900 text-lg leading-relaxed text-justify">
+                <div className={styleCardText}>
                     <CustomMarkdown markdown={entry?.body ?? ""} />
                 </div>
             ) : (
-                <div className="text-amber-900 text-lg leading-relaxed line-clam-3 text-justify">
+                <div className={styleCardTextSnip}>
                     <CustomMarkdown markdown={snip(entry?.body ?? "")} />
                 </div>
             )}

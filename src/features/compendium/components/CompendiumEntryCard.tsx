@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import ReactMarkdown from "react-markdown";
 import type { CompendiumEntry } from "../types";
 import { snip } from "../../../shared/util";
+import { styleCardBody, styleCardText, styleCardTextSnip, styleCardTitle } from "../../../shared/styles";
 
 type Mode = "create" | "edit";
 
@@ -48,10 +49,10 @@ const CompendiumEntryCard = ({ mode, entry, isExpanded, isDeleting, isEditing, i
     }
 
     return (
-        <article ref={ref} onClick={onClick} className="px-8 py-8 bg-gradient-to-br from-amber-50/95 to-amber-100/95">
+        <article ref={ref} onClick={onClick} className={styleCardBody}>
             <header>
                 {mode === "create" || editing ? (
-                    <div className="text-2xl font-semibold text-amber-800 mb-1">
+                    <div className={styleCardTitle}>
                         <span>Tags </span>
                         <input type="text"
                             className="border-2 border-amber-800 rounded-lg w-10 text-center"
@@ -66,7 +67,7 @@ const CompendiumEntryCard = ({ mode, entry, isExpanded, isDeleting, isEditing, i
                         />
                     </div>
                 ) : (
-                    <h3 className="text-2xl font-semibold text-amber-800 mb-1">Tags {entry?.tags ?? "0"} : {entry?.title ?? "untitled"}</h3>
+                    <h3 className={styleCardTitle}>Tags {entry?.tags ?? "0"} : {entry?.title ?? "untitled"}</h3>
                 )}
             </header>
             {mode === "create" || editing ? (
@@ -77,13 +78,13 @@ const CompendiumEntryCard = ({ mode, entry, isExpanded, isDeleting, isEditing, i
                     rows={8}
                 ></textarea>
             ) : isExpanded ? (
-                <div className="text-amber-900 text-lg leading-relaxed text-justify">
+                <div className={styleCardText}>
                     <ReactMarkdown>
                         {entry?.body ?? ""}
                     </ReactMarkdown>
                 </div>
             ) : (
-                <div className="text-amber-900 text-lg leading-relaxed line-clam-3 text-justify">
+                <div className={styleCardTextSnip}>
                     <ReactMarkdown>
                         {snip(entry?.body ?? "")}
                     </ReactMarkdown>
