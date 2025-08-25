@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useAppStore } from "../../app/AppStore";
 
 interface ModalProps {
     children: React.ReactNode;
@@ -15,6 +15,9 @@ const sizeClasses: Record<NonNullable<ModalProps["size"]>, string> = {
 };
 
 const Modal = ({ children, className = '', size = 'md' }: ModalProps) => {
+
+    const closeCompendiumNote = useAppStore((s) => s.closeCompendiumNote);
+
     useEffect(() => {
 
         const handleEscape = (e: KeyboardEvent) => {
@@ -30,9 +33,8 @@ const Modal = ({ children, className = '', size = 'md' }: ModalProps) => {
         }
     }, []);
 
-    const navigate = useNavigate();
     const handleClose = () => {
-        navigate(-1);
+        closeCompendiumNote();
     }
 
     const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
