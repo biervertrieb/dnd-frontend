@@ -3,6 +3,7 @@ import ReactMarkdown from "react-markdown";
 import type { CompendiumEntry } from "../types";
 import { snip } from "../../../shared/util";
 import { styleCardBody, styleCardText, styleCardTextSnip, styleCardTitle } from "../../../shared/styles";
+import CustomMarkdown from "../../../shared/CustomMarkdown";
 
 type Mode = "create" | "edit";
 
@@ -79,15 +80,11 @@ const CompendiumEntryCard = ({ mode, entry, isExpanded, isDeleting, isEditing, i
                 ></textarea>
             ) : isExpanded ? (
                 <div className={styleCardText}>
-                    <ReactMarkdown>
-                        {entry?.body ?? ""}
-                    </ReactMarkdown>
+                    <CustomMarkdown markdown={entry?.body ?? ""} />
                 </div>
             ) : (
                 <div className={styleCardTextSnip}>
-                    <ReactMarkdown>
-                        {snip(entry?.body ?? "")}
-                    </ReactMarkdown>
+                    <CustomMarkdown markdown={snip(entry?.body ?? "")} />
                 </div>
             )}
             {/* Controls */}
