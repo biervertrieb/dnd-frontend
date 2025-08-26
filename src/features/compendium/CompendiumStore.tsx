@@ -112,7 +112,8 @@ export const useCompendiumStore = create<CompendiumState & CompendiumActions>()(
         },
         loadEntries: async () => {
             const alreadyLoaded = get().hasLoaded;
-            if (alreadyLoaded)
+            const isCurrentlyLoading = get().loading;
+            if (alreadyLoaded || isCurrentlyLoading)
                 return;
             set({ loading: true });
             try {
