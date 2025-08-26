@@ -1,9 +1,9 @@
 import { useState, useEffect, useRef } from "react";
-import ReactMarkdown from "react-markdown";
 import type { CompendiumEntry } from "../types";
 import { snip } from "../../../shared/util";
 import { styleCardBody, styleCardText, styleCardTextSnip, styleCardTitle } from "../../../shared/styles";
 import CustomMarkdown from "../../../shared/CustomMarkdown";
+import CardEditor from "../../../shared/CardEditor";
 
 type Mode = "create" | "edit";
 
@@ -72,12 +72,12 @@ const CompendiumEntryCard = ({ mode, entry, isExpanded, isDeleting, isEditing, i
                 )}
             </header>
             {mode === "create" || editing ? (
-                <textarea
-                    className="w-full text-justify bg-amber-50/80 border-2 border-amber-900 rounded-lg px-4 py-4 text-amber-900 text-lg leading-relaxed resize-y min-h-32 focus:outline-none focus:border-yellow-500 focus:shadow-lg focus:shadow-yellow-500/20"
+                <CardEditor
                     value={editBody}
-                    onChange={(e) => setEditBody(e.target.value)}
+                    onChange={setEditBody}
+                    className="w-full text-justify bg-amber-50/80 border-2 border-amber-900 rounded-lg px-4 py-4 text-amber-900 text-lg leading-relaxed resize-y min-h-32 focus:outline-none focus:border-yellow-500 focus:shadow-lg focus:shadow-yellow-500/20"
                     rows={8}
-                ></textarea>
+                />
             ) : isExpanded ? (
                 <div className={styleCardText}>
                     <CustomMarkdown markdown={entry?.body ?? ""} />
