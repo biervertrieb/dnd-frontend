@@ -4,6 +4,7 @@ import { createCompendiumEntry, deleteCompendiumEntry, getCompendiumEntries, upd
 
 type CompendiumState = {
     entries: CompendiumEntry[],
+    hasLoaded: boolean,
     showNewEntry: boolean,
     savingNew: boolean,
     loading: boolean,
@@ -35,6 +36,7 @@ const sortEntries = (entries: CompendiumEntry[]) => {
 export const useCompendiumStore = create<CompendiumState & CompendiumActions>()(
     (set, get) => ({
         entries: [],
+        hasLoaded: false,
         showNewEntry: false,
         savingNew: false,
         loading: false,
@@ -109,15 +111,19 @@ export const useCompendiumStore = create<CompendiumState & CompendiumActions>()(
             }
         },
         loadEntries: async () => {
+            const alreadyLoaded = get().hasLoaded;
+            if (alreadyLoaded)
+                return;
             set({ loading: true });
             try {
                 const data = await getCompendiumEntries();
                 set({ entries: sortEntries(data) });
+                set({ hasLoaded: true });
             } catch (e) {
                 console.error(e);
                 alert("Failed to load entries!");
             } finally {
-                set({ loading: false })
+                set({ loading: false });
             }
         }
     })
