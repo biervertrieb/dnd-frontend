@@ -60,45 +60,47 @@ const CompendiumEntryCard = ({ mode, entry, isExpanded, isDeleting, isEditing, i
                             value={editTitle}
                             onChange={(e) => setEditTitle(e.target.value)}
                         />
-                        <div className="mt-2 flex flex-wrap gap-2">
-                            {editTags.map((tag, idx) => (
-                                <span key={idx} className="flex items-center gap-1 bg-amber-200/60 px-2 py-1 rounded">
-                                    <input
-                                        type="text"
-                                        value={tag}
-                                        className="bg-transparent border-b border-amber-400 w-20 text-xs px-1"
-                                        onChange={e => {
-                                            const newTags = [...editTags];
-                                            newTags[idx] = e.target.value;
-                                            setEditTags(newTags);
-                                        }}
-                                    />
-                                    <button
-                                        type="button"
-                                        className="text-red-600 text-xs"
-                                        onClick={() => {
-                                            setEditTags(editTags.filter((_, i) => i !== idx));
-                                        }}
-                                    >✕</button>
-                                </span>
-                            ))}
-                            <button
-                                type="button"
-                                className="text-xs bg-amber-300/40 text-amber-700 px-2 py-1 rounded border border-amber-400"
-                                onClick={() => setEditTags([...editTags, ""])}
-                            >+ Add Tag</button>
-                        </div>
                     </div>
                 ) : (
                     <h3 className={styleCardTitle}>{entry?.title ?? "untitled"}</h3>
                 )}
             </header>
             {mode === "create" || editing ? (
-                <CardEditor
-                    value={editBody}
-                    onChange={setEditBody}
-                    className="w-full text-justify bg-amber-50/80 border-2 border-amber-900 rounded-lg px-4 py-4 text-amber-900 text-lg leading-relaxed resize-y min-h-32 focus:outline-none focus:border-yellow-500 focus:shadow-lg focus:shadow-yellow-500/20"
-                />
+                <>
+                    <CardEditor
+                        value={editBody}
+                        onChange={setEditBody}
+                        className="w-full text-justify bg-amber-50/80 border-2 border-amber-900 rounded-lg px-4 py-4 text-amber-900 text-lg leading-relaxed resize-y min-h-32 focus:outline-none focus:border-yellow-500 focus:shadow-lg focus:shadow-yellow-500/20"
+                    />
+                    <div className="mt-2 flex flex-wrap gap-2">
+                        {editTags.map((tag, idx) => (
+                            <span key={idx} className="flex items-center gap-1 bg-amber-200/60 px-2 py-1 rounded">
+                                <input
+                                    type="text"
+                                    value={tag}
+                                    className="bg-transparent border-b border-amber-400 w-20 text-xs px-1"
+                                    onChange={e => {
+                                        const newTags = [...editTags];
+                                        newTags[idx] = e.target.value;
+                                        setEditTags(newTags);
+                                    }}
+                                />
+                                <button
+                                    type="button"
+                                    className="text-red-600 text-xs"
+                                    onClick={() => {
+                                        setEditTags(editTags.filter((_, i) => i !== idx));
+                                    }}
+                                >✕</button>
+                            </span>
+                        ))}
+                        <button
+                            type="button"
+                            className="text-xs bg-amber-300/40 text-amber-700 px-2 py-1 rounded border border-amber-400"
+                            onClick={() => setEditTags([...editTags, ""])}
+                        >+ Add Tag</button>
+                    </div>
+                </>
             ) : isExpanded ? (
                 <>
                     <div className={styleCardText}>
