@@ -16,7 +16,7 @@ type Props = {
     isDeleting?: boolean,
     onClick?: () => void,
     onStartEdit?: () => void,
-    onSave: (title: string, tags: string, body: string) => void,
+    onSave: (title: string, tags: string[], body: string) => void,
     onCancel: () => void,
     onDelete?: () => void
 }
@@ -24,7 +24,7 @@ type Props = {
 const CompendiumEntryCard = ({ mode, entry, isExpanded, isDeleting, isEditing, isSaving, onClick, onSave, onStartEdit, onCancel, onDelete }: Props) => {
 
     const [editTitle, setEditTitle] = useState<string>(entry?.title ?? "");
-    const [editTags, setEditTags] = useState<string>(entry?.tags ?? "");
+    const [editTags, setEditTags] = useState<string>(entry?.tags ?? []);
     const [editBody, setEditBody] = useState<string>(entry?.body ?? "");
 
     const ref = useRef<HTMLElement>(null);
@@ -35,7 +35,7 @@ const CompendiumEntryCard = ({ mode, entry, isExpanded, isDeleting, isEditing, i
 
     useEffect(() => {
         setEditTitle(entry?.title ?? "");
-        setEditTags(entry?.tags ?? "");
+        setEditTags(entry?.tags ?? []);
         setEditBody(entry?.body ?? "");
     }, [entry?.title, entry?.tags, entry?.body]);
 
@@ -79,9 +79,18 @@ const CompendiumEntryCard = ({ mode, entry, isExpanded, isDeleting, isEditing, i
                     rows={8}
                 />
             ) : isExpanded ? (
+            <>
                 <div className={styleCardText}>
                     <CustomMarkdown markdown={entry?.body ?? ""} />
                 </div>
+             <div className="flex flex-wrap gap-1 mt-3">
+                    {entry?.tags.slice(0, 3).map(tag => (
+                    <span key={tag} className="text-xs bg-amber-300/40 text-amber-700 px-2 py-1 rounded">
+                        #{tag}
+                    </span>
+                ))}
+                </div>
+            </>
             ) : (
                 <div className={styleCardTextSnip}>
                     <CustomMarkdown markdown={snip(entry?.body ?? "")} />

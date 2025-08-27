@@ -19,7 +19,7 @@ export async function getCompendiumEntryByID(id: string): Promise<CompendiumEntr
     throw new Error(res.message ?? "something went horribly wrong with the API");
 }
 
-export async function createCompendiumEntry(title: string, tags: string, body: string): Promise<CompendiumEntry> {
+export async function createCompendiumEntry(title: string, tags: string[], body: string): Promise<CompendiumEntry> {
     let data = {
         "title": title,
         "tags": tags,
@@ -32,7 +32,7 @@ export async function createCompendiumEntry(title: string, tags: string, body: s
     throw new Error(res.message ?? "something went horribly wrong with the API");
 }
 
-export async function updateCompendiumEntry(id: string, title: string, tags: string, body: string): Promise<CompendiumEntry> {
+export async function updateCompendiumEntry(id: string, title: string, tags: string[], body: string): Promise<CompendiumEntry> {
     let data = {
         "title": title,
         "tags": tags,

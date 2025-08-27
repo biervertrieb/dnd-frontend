@@ -3,7 +3,7 @@ export interface CompendiumEntry {
     slug: string;
     title: string;
     body: string;
-    tags: string;
+    tags: string[];
     created_at: string;
     updated_at?: string;
 }

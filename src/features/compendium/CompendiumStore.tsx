@@ -23,8 +23,8 @@ type CompendiumActions = {
     setSaving: (saving: boolean) => void,
     setFocusedId: (focusedId: string | null) => void,
     setEntries: (entries: CompendiumEntry[]) => void,
-    createEntry: (title: string, tags: string, body: string) => Promise<void>,
-    updateEntry: (id: string, title: string, tags: string, body: string) => Promise<void>,
+    createEntry: (title: string, tags: string[], body: string) => Promise<void>,
+    updateEntry: (id: string, title: string, tags: string[], body: string) => Promise<void>,
     deleteEntry: (id: string) => Promise<void>,
     loadEntries: () => Promise<void>;
 }
