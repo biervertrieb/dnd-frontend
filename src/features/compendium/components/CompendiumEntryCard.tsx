@@ -69,7 +69,6 @@ const CompendiumEntryCard = ({ mode, entry, isExpanded, isDeleting, isEditing, i
                     value={editBody}
                     onChange={setEditBody}
                     className="w-full text-justify bg-amber-50/80 border-2 border-amber-900 rounded-lg px-4 py-4 text-amber-900 text-lg leading-relaxed resize-y min-h-32 focus:outline-none focus:border-yellow-500 focus:shadow-lg focus:shadow-yellow-500/20"
-                    rows={8}
                 />
             ) : isExpanded ? (
                 <div className={styleCardText}>
