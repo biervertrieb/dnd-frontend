@@ -26,6 +26,13 @@ const CompendiumModal = () => {
                     <div className={styleCardText}>
                         <CustomMarkdown markdown={compEntry?.body} />
                     </div>
+                    <div className="flex flex-wrap gap-1 mt-3">
+                        {compEntry?.tags.map(tag => (
+                            <span key={tag} className="text-xs bg-amber-300/40 text-amber-700 px-2 py-1 rounded">
+                                #{tag}
+                            </span>
+                        ))}
+                    </div>
                 </>
             )}
         </Modal>
