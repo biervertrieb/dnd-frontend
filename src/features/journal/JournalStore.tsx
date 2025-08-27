@@ -4,6 +4,7 @@ import { createJournalEntry, deleteJournalEntry, getJournalEntries, updateJourna
 
 type JournalState = {
     entries: JournalEntry[],
+    hasLoaded: boolean,
     showNewEntry: boolean,
     savingNew: boolean,
     loading: boolean,
@@ -35,6 +36,7 @@ const sortEntries = (entries: JournalEntry[]) => {
 export const useJournalStore = create<JournalState & JournalActions>()(
     (set, get) => ({
         entries: [],
+        hasLoaded: false,
         showNewEntry: false,
         savingNew: false,
         loading: false,
@@ -117,10 +119,15 @@ export const useJournalStore = create<JournalState & JournalActions>()(
             }
         },
         loadEntries: async () => {
+            const alreadyLoaded = get().hasLoaded;
+            const isCurrentlyLoading = get().loading;
+            if (alreadyLoaded || isCurrentlyLoading)
+                return;
             set({ loading: true });
             try {
                 const data = await getJournalEntries();
                 set({ entries: sortEntries(data) });
+                set({ hasLoaded: true });
             } catch (e) {
                 console.error(e);
                 alert("Failed to load entries!");
