@@ -54,13 +54,6 @@ const CompendiumEntryCard = ({ mode, entry, isExpanded, isDeleting, isEditing, i
             <header>
                 {mode === "create" || editing ? (
                     <div className={styleCardTitle}>
-                        <span>Tags </span>
-                        <input type="text"
-                            className="border-2 border-amber-800 rounded-lg w-10 text-center"
-                            value={editTags}
-                            onChange={(e) => setEditTags(e.target.value)}
-                        />
-                        <span> : </span>
                         <input type="text"
                             className="border-2 border-amber-800 rounded-lg"
                             value={editTitle}
@@ -68,7 +61,7 @@ const CompendiumEntryCard = ({ mode, entry, isExpanded, isDeleting, isEditing, i
                         />
                     </div>
                 ) : (
-                    <h3 className={styleCardTitle}>Tags {entry?.tags ?? "0"} : {entry?.title ?? "untitled"}</h3>
+                    <h3 className={styleCardTitle}>{entry?.title ?? "untitled"}</h3>
                 )}
             </header>
             {mode === "create" || editing ? (
@@ -79,22 +72,23 @@ const CompendiumEntryCard = ({ mode, entry, isExpanded, isDeleting, isEditing, i
                     rows={8}
                 />
             ) : isExpanded ? (
-                <>
-                    <div className={styleCardText}>
-                        <CustomMarkdown markdown={entry?.body ?? ""} />
-                    </div>
-                    <div className="flex flex-wrap gap-1 mt-3">
-                        {entry?.tags.slice(0, 3).map(tag => (
-                            <span key={tag} className="text-xs bg-amber-300/40 text-amber-700 px-2 py-1 rounded">
-                                #{tag}
-                            </span>
-                        ))}
-                    </div>
-                </>
+                <div className={styleCardText}>
+                    <CustomMarkdown markdown={entry?.body ?? ""} />
+                </div>
             ) : (
                 <div className={styleCardTextSnip}>
                     <CustomMarkdown markdown={snip(entry?.body ?? "")} />
                 </div>
+            )}
+            {mode !== "create" && !editing && (
+                <div className="flex flex-wrap gap-1 mt-3">
+                    {entry?.tags.slice(0, 3).map(tag => (
+                        <span key={tag} className="text-xs bg-amber-300/40 text-amber-700 px-2 py-1 rounded">
+                            #{tag}
+                        </span>
+                    ))}
+                </div>
+
             )}
             {/* Controls */}
             {deleting ? (
