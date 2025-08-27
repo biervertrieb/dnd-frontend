@@ -23,9 +23,7 @@ const JournalTimeline = () => {
     const loadEntries = useJournalStore((s) => s.loadEntries);
 
     useEffect(() => {
-        (async () => {
-            loadEntries();
-        })();
+        loadEntries();
     }, []);
 
     const handleClick = (id: string) => {
