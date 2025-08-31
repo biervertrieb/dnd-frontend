@@ -2,6 +2,32 @@ import { useEffect } from "react";
 import CompendiumEntryCard from "./CompendiumEntryCard";
 import { useCompendiumStore } from "../CompendiumStore";
 
+import { useState } from "react";
+
+type CompendiumSearchBarProps = {
+    onSearch: (term: string) => void;
+};
+
+const CompendiumSearchBar: React.FC<CompendiumSearchBarProps> = ({ onSearch }) => {
+    const [searchTerm, setSearchTerm] = useState("");
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const term = e.target.value;
+        setSearchTerm(term);
+        onSearch(term);
+    };
+    return (
+        <div className="mb-8 flex items-center gap-3">
+            <input
+                type="text"
+                value={searchTerm}
+                onChange={handleChange}
+                placeholder="Search compendium..."
+                className="w-full px-4 py-2 rounded-lg border-2 border-amber-700 focus:outline-none focus:border-yellow-500 bg-amber-50 text-amber-900 text-lg"
+            />
+        </div>
+    );
+};
+
 const CompendiumOverview = () => {
     const entries = useCompendiumStore((s) => s.entries);
     const loading = useCompendiumStore((s) => s.loading);
@@ -15,6 +41,20 @@ const CompendiumOverview = () => {
     const updateEntry = useCompendiumStore((s) => s.updateEntry);
     const deleteEntry = useCompendiumStore((s) => s.deleteEntry);
     const loadEntries = useCompendiumStore((s) => s.loadEntries);
+
+    // Search state
+    const [searchTerm, setSearchTerm] = useState("");
+
+    // Filter entries by title, body, or tags
+    const filteredEntries = entries.filter(entry => {
+        const term = searchTerm.trim().toLowerCase();
+        if (!term) return true;
+        return (
+            entry.title.toLowerCase().includes(term) ||
+            entry.body.toLowerCase().includes(term) ||
+            entry.tags.some(tag => tag.toLowerCase().includes(term))
+        );
+    });
 
     useEffect(() => {
         loadEntries();
@@ -36,14 +76,15 @@ const CompendiumOverview = () => {
 
     return (
         <div className="relative px-8">
+            <CompendiumSearchBar onSearch={setSearchTerm} />
             {loading && (
                 <div className="text-yellow-400 text-lg pt-10">Loading compendium...</div>
             )}
 
             {!loading && (() => {
-                // Group entries by starting character
-                const groups: { [key: string]: typeof entries } = {};
-                entries.forEach(entry => {
+                // Group filtered entries by starting character
+                const groups: { [key: string]: typeof filteredEntries } = {};
+                filteredEntries.forEach(entry => {
                     const char = entry.title.trim().charAt(0).toUpperCase();
                     const groupKey = /[A-Z]/.test(char) ? char : '#';
                     if (!groups[groupKey]) groups[groupKey] = [];
