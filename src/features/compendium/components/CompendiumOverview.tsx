@@ -64,6 +64,15 @@ const CompendiumSearchBar: React.FC<CompendiumSearchBarProps> = ({ onSearch, all
 
     return (
         <div className="mb-8 flex flex-col gap-2 relative">
+            <input
+                type="text"
+                value={searchTerm}
+                onChange={handleInputChange}
+                onKeyDown={handleInputKeyDown}
+                placeholder="Search compendium..."
+                className="w-full px-4 py-2 rounded-lg border-2 border-amber-700 focus:outline-none focus:border-yellow-500 bg-amber-50 text-amber-900 text-lg"
+                autoComplete="off"
+            />
             <div className="flex flex-wrap gap-2 mb-2">
                 {searchTags.map(tag => (
                     <span key={tag} className="flex items-center gap-1 bg-amber-200/60 px-2 py-1 rounded text-xs">
@@ -76,15 +85,6 @@ const CompendiumSearchBar: React.FC<CompendiumSearchBarProps> = ({ onSearch, all
                     </span>
                 ))}
             </div>
-            <input
-                type="text"
-                value={searchTerm}
-                onChange={handleInputChange}
-                onKeyDown={handleInputKeyDown}
-                placeholder="Search compendium..."
-                className="w-full px-4 py-2 rounded-lg border-2 border-amber-700 focus:outline-none focus:border-yellow-500 bg-amber-50 text-amber-900 text-lg"
-                autoComplete="off"
-            />
             {showSuggestions && (
                 <div className="absolute top-full left-0 w-full bg-amber-50 border-2 border-amber-700 rounded-lg shadow-lg z-10 mt-1">
                     {suggestions.map(tag => (
