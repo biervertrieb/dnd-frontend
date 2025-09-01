@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import CompendiumEntryCard from "./CompendiumEntryCard";
 import { useCompendiumStore } from "../CompendiumStore";
 
@@ -14,6 +14,7 @@ const CompendiumSearchBar: React.FC<CompendiumSearchBarProps> = ({ onSearch, all
     const [searchTags, setSearchTags] = useState<string[]>([]);
     const [suggestions, setSuggestions] = useState<string[]>([]);
     const [showSuggestions, setShowSuggestions] = useState(false);
+    const inputRef = useRef<HTMLInputElement>(null);
 
     // Update suggestions when typing
     useEffect(() => {
@@ -43,10 +44,12 @@ const CompendiumSearchBar: React.FC<CompendiumSearchBarProps> = ({ onSearch, all
         setSearchTags([...searchTags, tag]);
         setSearchTerm("");
         setShowSuggestions(false);
+        inputRef.current?.focus();
     };
 
     const handleTagRemove = (tag: string) => {
         setSearchTags(searchTags.filter(t => t !== tag));
+        inputRef.current?.focus();
     };
 
     const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -60,20 +63,18 @@ const CompendiumSearchBar: React.FC<CompendiumSearchBarProps> = ({ onSearch, all
                 e.preventDefault();
             }
         }
+        // Remove last tag with Backspace if input is empty
+        if (e.key === "Backspace" && !searchTerm && searchTags.length > 0) {
+            setSearchTags(searchTags.slice(0, -1));
+        }
     };
 
     return (
         <div className="mb-8 flex flex-col gap-2 relative">
-            <input
-                type="text"
-                value={searchTerm}
-                onChange={handleInputChange}
-                onKeyDown={handleInputKeyDown}
-                placeholder="Search compendium..."
-                className="w-full px-4 py-2 rounded-lg border-2 border-amber-700 focus:outline-none focus:border-yellow-500 bg-amber-50 text-amber-900 text-lg"
-                autoComplete="off"
-            />
-            <div className="flex flex-wrap gap-2 mb-2">
+            <div
+                className="flex flex-wrap items-center gap-2 px-4 py-2 rounded-lg border-2 border-amber-700 focus-within:border-yellow-500 bg-amber-50 text-amber-900 text-lg"
+                onClick={() => inputRef.current?.focus()}
+            >
                 {searchTags.map(tag => (
                     <span key={tag} className="flex items-center gap-1 bg-amber-200/60 px-2 py-1 rounded text-xs">
                         #{tag}
@@ -81,9 +82,20 @@ const CompendiumSearchBar: React.FC<CompendiumSearchBarProps> = ({ onSearch, all
                             type="button"
                             className="text-red-600 text-xs ml-1"
                             onClick={() => handleTagRemove(tag)}
+                            tabIndex={-1}
                         >✕</button>
                     </span>
                 ))}
+                <input
+                    ref={inputRef}
+                    type="text"
+                    value={searchTerm}
+                    onChange={handleInputChange}
+                    onKeyDown={handleInputKeyDown}
+                    placeholder={searchTags.length === 0 ? "Search compendium..." : ""}
+                    className="flex-1 bg-transparent outline-none text-amber-900 text-lg min-w-[120px]"
+                    autoComplete="off"
+                />
             </div>
             {showSuggestions && (
                 <div className="absolute top-full left-0 w-full bg-amber-50 border-2 border-amber-700 rounded-lg shadow-lg z-10 mt-1">
@@ -185,12 +197,12 @@ const CompendiumOverview = () => {
                         {sortedKeys.map(groupKey => (
                             <div key={groupKey} className="mb-8">
                                 <div className="flex items-center mb-4">
-                                  <div className="w-16 h-16 bg-gradient-to-br from-yellow-600 to-amber-700 rounded-full flex items-center justify-center mr-4 shadow-lg">
-                                      <span className="text-2xl font-bold text-yellow-100" style={{fontFamily: 'serif'}}>
-                                         {groupKey === '#' ? 'Other' : groupKey}
+                                    <div className="w-16 h-16 bg-gradient-to-br from-yellow-600 to-amber-700 rounded-full flex items-center justify-center mr-4 shadow-lg">
+                                        <span className="text-2xl font-bold text-yellow-100" style={{ fontFamily: 'serif' }}>
+                                            {groupKey === '#' ? 'Other' : groupKey}
                                         </span>
-                                  </div>
-                                  <div className="flex-1 h-0.5 bg-gradient-to-r from-amber-600 to-transparent"></div>
+                                    </div>
+                                    <div className="flex-1 h-0.5 bg-gradient-to-r from-amber-600 to-transparent"></div>
                                 </div>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 ml-20">
                                     {groups[groupKey].map(entry => (
