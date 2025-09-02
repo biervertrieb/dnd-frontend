@@ -19,15 +19,13 @@ const AppContent = () => {
     }
 
     return (
-        <>
-            <Layout>
-                <Routes>
-                    <Route path="/" element={<JournalPage />} />
-                    <Route path="/compendium" element={<CompendiumPage />} />
-                    <Route path="/loot" element={<div>Loot coming soon...</div>} />
-                </Routes>
-            </Layout >
-        </>
+        <Layout>
+            <Routes>
+                <Route path="/" element={<JournalPage />} />
+                <Route path="/compendium" element={<CompendiumPage />} />
+                <Route path="/loot" element={<div>Loot coming soon...</div>} />
+            </Routes>
+        </Layout >
     );
 }
 
