@@ -5,27 +5,31 @@ import CompendiumPage from "../features/compendium/CompendiumPage";
 import "./app.css";
 import CompendiumModal from "../features/modals/CompendiumModal";
 import LoginPage from "../features/auth/LoginPage";
+import RegisterPage from "../features/auth/RegisterPage";
 import { useAppStore } from "./AppStore";
 
 const AppContent = () => {
     const isAuthenticated = useAppStore((s) => s.isAuthenticated);
 
-    if (!isAuthenticated) {
-        return (
-            <Layout nonav={true}>
-                <LoginPage />;
-            </Layout>
-        )
-    }
-
     return (
-        <Layout>
+        <Layout nonav={!isAuthenticated}>
             <Routes>
-                <Route path="/" element={<JournalPage />} />
-                <Route path="/compendium" element={<CompendiumPage />} />
-                <Route path="/loot" element={<div>Loot coming soon...</div>} />
+                <Route path="/login" element={<LoginPage />} />
+                <Route path="/register" element={<RegisterPage />} />
+                <Route
+                    path="/"
+                    element={isAuthenticated ? <JournalPage /> : <LoginPage />}
+                />
+                <Route
+                    path="/compendium"
+                    element={isAuthenticated ? <CompendiumPage /> : <LoginPage />}
+                />
+                <Route
+                    path="/loot"
+                    element={isAuthenticated ? <div>Loot coming soon...</div> : <LoginPage />}
+                />
             </Routes>
-        </Layout >
+        </Layout>
     );
 }
 
