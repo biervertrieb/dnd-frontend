@@ -57,8 +57,8 @@ export const useJournalStore = create<JournalState & JournalActions>()(
                 alert("Title is required!");
                 return;
             }
-            if (!isNaN(parseInt(day))) {
-                alert("Day must be a valid number!");
+            if (Number.isInteger(Number(day)) === false) {
+                alert("Day must be a valid number!" + day);
                 return;
             }
             set({ savingNew: true });
@@ -81,7 +81,7 @@ export const useJournalStore = create<JournalState & JournalActions>()(
                 alert("Title is required!");
                 return;
             }
-            if (isNaN(parseInt(day))) {
+            if (Number.isInteger(Number(day)) === false) {
                 alert("Day must be a valid number");
                 return;
             }
