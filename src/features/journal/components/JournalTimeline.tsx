@@ -54,10 +54,12 @@ const JournalTimeline = () => {
                     (<TimelineSpine />)}
 
             {!loading && entries.map((entry, index) => (
-                < div className={`relative mb-10 ${index % 2 === 0 ? 'mr-1/2 pr-10' : 'ml-1/2 pl-10'}`}>
+                < div
+                    className={`relative mb-10 ${index % 2 === 0 ? 'mr-1/2 pr-10' : 'ml-1/2 pl-10'}`}
+                    key={entry.id}
+                >
                     <div className={`absolute w-4 h-4 bg-gradient-to-br from-yellow-400 to-yellow-500 border-4 border-amber-800 rounded-full top-8 shadow-lg shadow-yellow-500/60 ${index % 2 === 0 ? '-right-12' : '-left-12'}`}></div>
                     <JournalEntryCard
-                        key={entry.id}
                         mode="edit"
                         entry={entry}
                         isExpanded={focusedId === entry.id}
