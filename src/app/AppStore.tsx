@@ -62,7 +62,7 @@ export const useAppStore = create<AppState & AppActions>()(
             set({ authLoading: true, authError: null });
             const accessToken = localStorage.getItem("accessToken");
             if (!accessToken) {
-                set({ isAuthenticated: false });
+                set({ isAuthenticated: false, authLoading: false, user: null });
                 return;
             }
             try {
