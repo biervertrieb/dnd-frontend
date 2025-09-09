@@ -8,7 +8,6 @@ export type AuthResponse = {
     };
     accessToken?: string;
     refreshToken?: string;
-    message?: string;
 };
 
 export type LoginPayload = {
@@ -23,6 +22,10 @@ export type RegisterPayload = {
 
 export async function login(payload: LoginPayload): Promise<AuthResponse> {
     return apiPost<AuthResponse>("/auth/login", payload);
+}
+
+export async function getRefreshToken(payload: RefreshPayload): Promise<AuthResponse> {
+    return apiPost<AuthResponse>("/auth/refresh", payload);
 }
 
 export async function register(payload: RegisterPayload): Promise<AuthResponse> {
