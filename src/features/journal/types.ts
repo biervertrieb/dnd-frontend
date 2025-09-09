@@ -7,4 +7,8 @@ export interface JournalEntry {
     updated_at?: string;
 }
 
-export type JournalEntryUI = JournalEntry & { editing: boolean, expanded: boolean }
+export type JournalEntryResponse = {
+    status: string;
+    entry?: JournalEntry;
+    message?: string;
+}
