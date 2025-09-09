@@ -20,11 +20,11 @@ export type RegisterPayload = {
     password: string;
 };
 
-export async function login(payload: LoginPayload): Promise<AuthResponse> {
+export async function apiLogin(payload: LoginPayload): Promise<AuthResponse> {
     return apiPost<AuthResponse>("/auth/login", payload);
 }
 
-export async function register(payload: RegisterPayload): Promise<AuthResponse> {
+export async function apiRegister(payload: RegisterPayload): Promise<AuthResponse> {
     return apiPost<AuthResponse>("/auth/register", payload);
 }
 
