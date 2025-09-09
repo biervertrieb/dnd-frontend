@@ -3,6 +3,7 @@ import type { CompendiumEntry } from "../features/compendium/types";
 import { getCompendiumEntryByID } from "../features/compendium/api";
 
 import { apiPost } from "../shared/api";
+import { apiLogin, apiRegister, getCurrentUser, getRefreshToken } from "../features/auth/api";
 
 type AppState = {
     openedCompendiumNote: CompendiumEntry | null,
@@ -10,7 +11,6 @@ type AppState = {
     compendiumLoading: boolean,
     error: string | null,
 
-    token: string | null,
     user: string | null,
     isAuthenticated: boolean,
     authLoading: boolean,
@@ -21,6 +21,7 @@ type AppActions = {
     openCompendiumNote: (id: string) => Promise<void>,
     closeCompendiumNote: () => void,
 
+    authenticate: () => Promise<void>,
     login: (username: string, password: string) => Promise<void>,
     logout: () => void,
     register: (username: string, password: string) => Promise<void>,
@@ -33,7 +34,6 @@ export const useAppStore = create<AppState & AppActions>()(
         compendiumLoading: false,
         error: null,
 
-        token: localStorage.getItem("jwt") ?? null,
         user: localStorage.getItem("user") ?? null,
         isAuthenticated: false,
         authLoading: false,
@@ -57,69 +57,68 @@ export const useAppStore = create<AppState & AppActions>()(
                 set({ compendiumLoading: false });
             }
         },
-        login: async () => {
-            const token = localStorage.getItem("jwt");
-            if (!token) {
+
+        authenticate: async () => {
+            set({ authLoading: true, authError: null });
+            const accessToken = localStorage.getItem("accessToken");
+            if (!accessToken) {
                 set({ isAuthenticated: false });
                 return;
             }
             try {
                 // Try to fetch a protected resource
-                await getCompendiumEntryByID("test-token-check");
+                const auth = await getCurrentUser();
                 set({ isAuthenticated: true });
+                set({ user: auth.user.username });
+                localStorage.setItem("user", auth.user.username);
             } catch {
-                set({ isAuthenticated: false });
+                localStorage.removeItem("accessToken");
+                localStorage.removeItem("refreshToken");
+                localStorage.removeItem("user");
+                set({ isAuthenticated: false, authError: "could not authenticate with token", user: null });
+            } finally {
+                set({ authLoading: false });
             }
         },
-        regenerateJWT: async () => {
-            const token = localStorage.getItem("jwt");
-            const user = localStorage.getItem("user");
-            if (!token || !user) { }, set({ isAuthenticated: false });
-            try {
-                // Try to fetch a protected resource
-                // If it works, just get a new token
-                await getCompendiumEntryByID("test-token-check");
-                set({ isAuthenticated: true });
-            } catch {
-                set({ isAuthenticated: false });
-            }
-        },
-        generateJWT: async (username: string, password: string) => {
+
+        login: async (username: string, password: string) => {
             set({ authLoading: true, authError: null });
             try {
-                const res = await apiPost<{ token: string; user: string }>("/login", { username, password });
-                localStorage.setItem("jwt", res.token);
-                localStorage.setItem("user", res.user);
-                set({ token: res.token, user: res.user, authError: null, isAuthenticated: true });
+                const res = await apiLogin({ username, password });
+                if (!res.accessToken || !res.refreshToken) {
+                    throw new Error("Invalid login response");
+                }
+                localStorage.setItem("accessToken", res.accessToken);
+                localStorage.setItem("refreshToken", res.refreshToken);
+                localStorage.setItem("user", res.user.username);
+                set({ user: res.user.username, authError: null, isAuthenticated: true });
             } catch (e: any) {
-                set({ authError: e.message || "Login failed", isAuthenticated: false });
+                localStorage.removeItem("accessToken");
+                localStorage.removeItem("refreshToken");
+                localStorage.removeItem("user");
+                set({ authError: e.message || "Login failed", isAuthenticated: false, user: null });
             } finally {
                 set({ authLoading: false });
             }
         },
 
         logout: () => {
-            localStorage.removeItem("jwt");
+            const refreshToken = localStorage.getItem("refreshToken");
+            if (refreshToken) {
+                apiPost("/auth/logout", { refreshToken }).catch(() => { /* Ignore errors on logout */ });
+            }
+            localStorage.removeItem("accessToken");
+            localStorage.removeItem("refreshToken");
             localStorage.removeItem("user");
-            set({ token: null, user: null, isAuthenticated: false });
+            set({ user: null, isAuthenticated: false });
         },
 
         register: async (username: string, password: string) => {
             set({ authLoading: true, authError: null });
             try {
-                const res = await apiPost<{ token: string; user: string }>("/register", { username, password });
-                localStorage.setItem("jwt", res.token);
-                localStorage.setItem("user", res.user);
-                set({ token: res.token, user: res.user, authError: null });
-                // Validate token by making a real API call
-                try {
-                    await getCompendiumEntryByID("test-token-check");
-                    set({ isAuthenticated: true });
-                } catch {
-                    set({ isAuthenticated: false });
-                }
+                await apiRegister({ username, password });
             } catch (e: any) {
-                set({ authError: e.message || "Registration failed", isAuthenticated: false });
+                set({ authError: e.message || "Registration failed" });
             } finally {
                 set({ authLoading: false });
             }
