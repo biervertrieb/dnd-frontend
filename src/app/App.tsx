@@ -15,7 +15,7 @@ const AppContent = () => {
 
     useEffect(() => {
         authenticate();
-    }, [authenticate]);
+    }, []);
 
     return (
         <Layout nonav={!isAuthenticated}>
