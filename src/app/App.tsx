@@ -1,3 +1,4 @@
+import React, { useEffect } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Layout from "./Layout";
 import JournalPage from "../features/journal/JournalPage";
@@ -10,6 +11,11 @@ import { useAppStore } from "./AppStore";
 
 const AppContent = () => {
     const isAuthenticated = useAppStore((s) => s.isAuthenticated);
+    const authenticate = useAppStore((s) => s.authenticate);
+
+    useEffect(() => {
+        authenticate();
+    }, [authenticate]);
 
     return (
         <Layout nonav={!isAuthenticated}>
