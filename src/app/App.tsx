@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Layout from "./Layout";
 import JournalPage from "../features/journal/JournalPage";
 import CompendiumPage from "../features/compendium/CompendiumPage";
@@ -20,7 +20,7 @@ const AppContent = () => {
     return (
         <Layout nonav={!isAuthenticated}>
             <Routes>
-                <Route path="/login" element={<LoginPage />} />
+                <Route path="/login" element={isAuthenticated ? <Navigate to="/" replace /> : <LoginPage />} />
                 <Route path="/register" element={<RegisterPage />} />
                 <Route
                     path="/"
