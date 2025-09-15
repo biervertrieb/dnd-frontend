@@ -3,7 +3,7 @@ import type { CompendiumEntry } from "../features/compendium/types";
 import { getCompendiumEntryByID } from "../features/compendium/api";
 
 import { apiPost } from "../shared/api";
-import { apiLogin, apiRegister, getCurrentUser } from "../features/auth/api";
+import { apiLogin, apiRegister, getCurrentUser } from "../auth/api";
 
 type AppState = {
     openedCompendiumNote: CompendiumEntry | null,

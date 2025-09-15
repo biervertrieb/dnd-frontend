@@ -5,8 +5,8 @@ import JournalPage from "../features/journal/JournalPage";
 import CompendiumPage from "../features/compendium/CompendiumPage";
 import "./app.css";
 import CompendiumModal from "../features/modals/CompendiumModal";
-import LoginPage from "../features/auth/LoginPage";
-import RegisterPage from "../features/auth/RegisterPage";
+import LoginPage from "../auth/LoginPage";
+import RegisterPage from "../auth/RegisterPage";
 import { useAppStore } from "./AppStore";
 
 const AppContent = () => {
