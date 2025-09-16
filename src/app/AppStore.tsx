@@ -2,8 +2,7 @@ import { create } from "zustand";
 import type { CompendiumEntry } from "../features/compendium/types";
 import { getCompendiumEntryByID } from "../features/compendium/api";
 
-import { apiPost } from "../shared/api";
-import { apiLogin, apiRegister, getCurrentUser } from "../auth/api";
+import { apiLogin, apiLogout, apiRegister, getCurrentUser } from "../auth/api";
 
 type AppState = {
     openedCompendiumNote: CompendiumEntry | null,
@@ -11,6 +10,7 @@ type AppState = {
     compendiumLoading: boolean,
     error: string | null,
 
+    at: string | null,
     user: string | null,
     isAuthenticated: boolean,
     authLoading: boolean,
@@ -21,6 +21,8 @@ type AppActions = {
     openCompendiumNote: (id: string) => Promise<void>,
     closeCompendiumNote: () => void,
 
+    setAccessToken: (token: string) => void,
+    setAuthenticated: (auth: boolean) => void,
     authenticate: () => Promise<void>,
     login: (username: string, password: string) => Promise<void>,
     logout: () => void,
@@ -34,10 +36,17 @@ export const useAppStore = create<AppState & AppActions>()(
         compendiumLoading: false,
         error: null,
 
-        user: localStorage.getItem("user") ?? null,
+        at: null,
+        user: null,
         isAuthenticated: false,
         authLoading: false,
         authError: null,
+        setAccessToken: (token: string) => {
+            set({ at: token });
+        },
+        setAuthenticated: (auth: boolean) => {
+            set({ isAuthenticated: auth });
+        },
         closeCompendiumNote: () => {
             set({ showingCompendiumNote: false });
         },
@@ -60,22 +69,30 @@ export const useAppStore = create<AppState & AppActions>()(
 
         authenticate: async () => {
             set({ authLoading: true, authError: null });
-            const accessToken = localStorage.getItem("accessToken");
-            if (!accessToken) {
-                set({ isAuthenticated: false, authLoading: false, user: null });
-                return;
-            }
             try {
-                // Try to fetch a protected resource
-                const auth = await getCurrentUser();
-                set({ isAuthenticated: true });
-                set({ user: auth.user.username });
-                localStorage.setItem("user", auth.user.username);
-            } catch {
-                localStorage.removeItem("accessToken");
-                localStorage.removeItem("refreshToken");
-                localStorage.removeItem("user");
-                set({ isAuthenticated: false, authError: "could not authenticate with token", user: null });
+                const res = await getCurrentUser();
+                if (res && res.accessToken && res.user) {
+                    set({
+                        user: res.user.username,
+                        isAuthenticated: true,
+                        at: res.accessToken,
+                        authError: null,
+                    });
+                } else {
+                    set({
+                        authError: null,
+                        isAuthenticated: false,
+                        user: null,
+                        at: null,
+                    });
+                }
+            } catch (e: any) {
+                set({
+                    authError: null,
+                    isAuthenticated: false,
+                    user: null,
+                    at: null,
+                });
             } finally {
                 set({ authLoading: false });
             }
@@ -85,32 +102,20 @@ export const useAppStore = create<AppState & AppActions>()(
             set({ authLoading: true, authError: null });
             try {
                 const res = await apiLogin({ username, password });
-                if (!res.accessToken || !res.refreshToken) {
+                if (!res.accessToken) {
                     throw new Error("Invalid login response");
                 }
-                localStorage.setItem("accessToken", res.accessToken);
-                localStorage.setItem("refreshToken", res.refreshToken);
-                localStorage.setItem("user", res.user.username);
-                set({ user: res.user.username, authError: null, isAuthenticated: true });
+                set({ user: res.user.username, authError: null, isAuthenticated: true, at: res.accessToken });
             } catch (e: any) {
-                localStorage.removeItem("accessToken");
-                localStorage.removeItem("refreshToken");
-                localStorage.removeItem("user");
-                set({ authError: e.message || "Login failed", isAuthenticated: false, user: null });
+                set({ authError: e.message || "Login failed", isAuthenticated: false, user: null, at: null });
             } finally {
                 set({ authLoading: false });
             }
         },
 
         logout: () => {
-            const refreshToken = localStorage.getItem("refreshToken");
-            if (refreshToken) {
-                apiPost("/auth/logout", { refreshToken }).catch(() => { /* Ignore errors on logout */ });
-            }
-            localStorage.removeItem("accessToken");
-            localStorage.removeItem("refreshToken");
-            localStorage.removeItem("user");
-            set({ user: null, isAuthenticated: false });
+            set({ user: null, isAuthenticated: false, at: null, authError: null });
+            apiLogout().catch(() => { /* Ignore logout errors */ });
         },
 
         register: async (username: string, password: string) => {

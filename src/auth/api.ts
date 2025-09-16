@@ -1,4 +1,6 @@
-import { apiPost, apiGet } from "../../shared/api";
+import { apiGet } from "../shared/api";
+
+const API_URL = import.meta.env.VITE_API_URL as string;
 
 export type AuthResponse = {
     status: string;
@@ -7,7 +9,8 @@ export type AuthResponse = {
         username: string;
     };
     accessToken?: string;
-    refreshToken?: string;
+    expiresAt?: number;
+    message?: string;
 };
 
 export type LoginPayload = {
@@ -21,11 +24,41 @@ export type RegisterPayload = {
 };
 
 export async function apiLogin(payload: LoginPayload): Promise<AuthResponse> {
-    return apiPost<AuthResponse>("/auth/login", payload);
+    const res = await fetch(`${API_URL}/auth/login`, {
+        method: "POST",
+        credentials: "include",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+    });
+    if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.message || "Login failed");
+    }
+    return res.json();
 }
 
 export async function apiRegister(payload: RegisterPayload): Promise<AuthResponse> {
-    return apiPost<AuthResponse>("/auth/register", payload);
+    const res = await fetch(`${API_URL}/auth/register`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+    });
+    if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.message || "Registration failed");
+    }
+    return res.json();
+}
+
+export async function apiLogout(): Promise<void> {
+    await fetch(`${API_URL}/auth/refresh/logout`, {
+        method: "POST",
+        credentials: "include",
+    });
 }
 
 export async function getCurrentUser(): Promise<AuthResponse> {

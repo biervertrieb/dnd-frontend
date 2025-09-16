@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useAppStore } from "../../app/AppStore";
+import { useAppStore } from "../app/AppStore";
 
 const LoginPage = () => {
     const login = useAppStore((s) => s.login);
