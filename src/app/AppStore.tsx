@@ -15,6 +15,7 @@ type AppState = {
     isAuthenticated: boolean,
     authLoading: boolean,
     authError: string | null,
+    authPromise: Promise<void> | null,
 }
 
 type AppActions = {
@@ -41,6 +42,7 @@ export const useAppStore = create<AppState & AppActions>()(
         isAuthenticated: false,
         authLoading: false,
         authError: null,
+        authPromise: null,
         setAccessToken: (token: string) => {
             set({ at: token });
         },
@@ -68,34 +70,65 @@ export const useAppStore = create<AppState & AppActions>()(
         },
 
         authenticate: async () => {
-            set({ authLoading: true, authError: null });
-            try {
-                const res = await getCurrentUser();
-                if (res && res.accessToken && res.user) {
-                    set({
-                        user: res.user.username,
-                        isAuthenticated: true,
-                        at: res.accessToken,
-                        authError: null,
-                    });
-                } else {
-                    set({
-                        authError: null,
-                        isAuthenticated: false,
-                        user: null,
-                        at: null,
-                    });
-                }
-            } catch (e: any) {
-                set({
-                    authError: null,
-                    isAuthenticated: false,
-                    user: null,
-                    at: null,
-                });
-            } finally {
-                set({ authLoading: false });
+            if (get().authPromise) {
+                return get().authPromise;
             }
+            set({
+                authPromise: (async () => {
+                    set({ authLoading: true, authError: null });
+                    if (get().isAuthenticated) {
+                        set({ authLoading: false });
+                        return;
+                    }
+                    try {
+                        const API_URL = import.meta.env.VITE_API_URL as string;
+                        const res = await fetch(`${API_URL}/auth/refresh`, {
+                            method: "POST",
+                            credentials: "include",
+                            headers: {
+                                "Content-Type": "application/json"
+                            },
+                        })
+                        if (res.ok) {
+                            const session = await res.json();
+                            if (session && session.accessToken && session.user) {
+                                set({
+                                    user: session.user.username,
+                                    isAuthenticated: true,
+                                    at: session.accessToken,
+                                    authError: null,
+                                });
+                            }
+                            else {
+                                set({
+                                    authError: null,
+                                    isAuthenticated: false,
+                                    user: null,
+                                    at: null,
+                                });
+                            }
+                        }
+                        else {
+                            set({
+                                authError: null,
+                                isAuthenticated: false,
+                                user: null,
+                                at: null,
+                            });
+                        }
+                    } catch (e: any) {
+                        set({
+                            authError: null,
+                            isAuthenticated: false,
+                            user: null,
+                            at: null,
+                        });
+                    } finally {
+                        set({ authLoading: false });
+                    }
+                })()
+            });
+            return get().authPromise;
         },
 
         login: async (username: string, password: string) => {
